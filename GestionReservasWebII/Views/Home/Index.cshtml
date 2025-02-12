@@ -1,0 +1,238 @@
+﻿@{
+    ViewData["Title"] = "Inicio de Sesión";
+    Layout = null; // Esto elimina el layout por defecto que podría incluir navbar y footer
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio de Sesión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #ffffff, #f0f4f8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .login-container {
+            display: flex;
+            width: 800px;
+            height: 500px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background-color: #ffffff;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .left-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #003366;
+            color: #ffffff;
+        }
+
+            .left-section img {
+                width: 150px;
+                height: auto;
+                margin-bottom: 20px;
+            }
+
+            .left-section h1 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+        .right-section {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: #f9fafc;
+            transition: all 0.3s ease-in-out;
+        }
+
+            .right-section h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+                color: #003366;
+                text-align: center;
+            }
+
+            .right-section form {
+                display: flex;
+                flex-direction: column;
+            }
+
+        .checkbox-group {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .checkbox-group label {
+                font-size: 0.9rem;
+                color: #333333;
+                cursor: pointer;
+            }
+
+            .checkbox-group input {
+                margin-right: 8px;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+            .form-group input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #cccccc;
+                border-radius: 5px;
+                font-size: 1rem;
+            }
+
+        .form-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .form-links a {
+                text-decoration: none;
+                font-size: 0.9rem;
+                color: #0066cc;
+            }
+
+                .form-links a:hover {
+                    text-decoration: underline;
+                }
+
+        .btn-submit {
+            background: #003366;
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+            .btn-submit:hover {
+                background: #004b99;
+            }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.checkbox-group input');
+            const title = document.querySelector('.right-section h2');
+            const form = document.querySelector('form');
+
+            // Animación para todos los elementos del formulario
+            form.addEventListener('animationend', () => {
+                form.style.animation = ''; // Resetea la animación
+            });
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    checkboxes.forEach(box => {
+                        if (box !== checkbox) {
+                            box.checked = false;
+                        }
+                    });
+
+                    // Agrega la animación a todo el formulario
+                    form.style.animation = 'fadeIn 0.5s ease-in-out';
+                    updateForm(checkbox.value);
+                });
+            });
+
+            function updateForm(role) {
+                const formGroups = document.querySelectorAll('.form-group');
+
+                if (role === 'student') {
+                    title.textContent = 'Bienvenido Estudiante!!';
+                    formGroups[0].querySelector('input').placeholder = 'Código universitario';
+                    formGroups[0].querySelector('input').type = 'text';
+                } else if (role === 'teacher') {
+                    title.textContent = 'Bienvenido Docente!!';
+                    formGroups[0].querySelector('input').placeholder = 'Correo electrónico (virtual.upt.pe)';
+                    formGroups[0].querySelector('input').type = 'email';
+                } else if (role === 'admin') {
+                    title.textContent = 'Bienvenido Administrador';
+                    formGroups[0].querySelector('input').placeholder = 'Correo personal';
+                    formGroups[0].querySelector('input').type = 'email';
+                }
+            }
+        });
+    </script>
+
+</head>
+<body>
+    <img src="~/images/fondo.png" alt="Logo de la Universidad">
+    <div class="login-container">
+
+        <!-- Left Section -->
+        <div class="left-section">
+            <img src="~/images/university-logo.png" alt="Logo de la Universidad">
+            <h1>Logo de la Universidad</h1>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <h2>Bienvenido Estudiante!!</h2>
+            <form asp-action="Index" method="post">
+                <!-- Checkbox Group -->
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="role" value="student" checked> Estudiante</label>
+                    <label><input type="checkbox" name="role" value="teacher"> Docente</label>
+                    <label><input type="checkbox" name="role" value="admin"> Administrador</label>
+                </div>
+
+                <!-- Input Fields -->
+                <div class="form-group">
+                    <input type="text" placeholder="Código universitario" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Contraseña" required>
+                </div>
+
+                <!-- Links -->
+                <div class="form-links">
+                    <a href="#">+ Regístrate</a>
+                    <a href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit">Ingresar</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

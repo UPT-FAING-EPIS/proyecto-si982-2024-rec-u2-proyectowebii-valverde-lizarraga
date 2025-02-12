@@ -1,0 +1,164 @@
+﻿@{
+    ViewData["Title"] = "Dashboard Usuario";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Usuario</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* Estilo del menú lateral */
+        .sidebar {
+            width: 250px;
+            background-color: #003366;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            height: 100vh;
+        }
+
+            .sidebar a {
+                display: flex;
+                align-items: center;
+                color: #ffffff;
+                text-decoration: none;
+                padding: 15px;
+                font-size: 1rem;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                transition: background 0.3s ease;
+            }
+
+                .sidebar a:hover {
+                    background-color: #004b99;
+                }
+
+                .sidebar a .icon {
+                    margin-right: 10px;
+                }
+
+            .sidebar .logout {
+                margin-top: auto;
+                background-color: #cc0000;
+            }
+
+                .sidebar .logout:hover {
+                    background-color: #ff3333;
+                }
+
+        /* Estilo del contenido principal */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #f0f4f8;
+        }
+
+        .welcome {
+            font-size: 1.5rem;
+            color: #003366;
+            margin-bottom: 20px;
+        }
+
+        .recent-activities {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            .card .icon {
+                font-size: 2rem;
+                margin-bottom: 10px;
+                color: #003366;
+            }
+
+            .card .text {
+                font-size: 1rem;
+                color: #333333;
+                text-align: center;
+            }
+    </style>
+</head>
+<body>
+    <!-- Menú lateral -->
+    <div class="sidebar">
+        <a href="#" class="menu-item"><i class="fas fa-home icon"></i> Inicio</a>
+        <a href="#" class="menu-item"><i class="fas fa-calendar-alt icon"></i> Reservar</a>
+        <a href="#" class="menu-item"><i class="fas fa-history icon"></i> Historial de reservas</a>
+        <a href="#" class="menu-item"><i class="fas fa-exclamation-triangle icon"></i> Incidencias</a>
+        <a href="#" class="menu-item"><i class="fas fa-cog icon"></i> Configuración</a>
+        <a href="#" class="menu-item logout"><i class="fas fa-sign-out-alt icon"></i> Cerrar sesión</a>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <div class="welcome">Bienvenido, "Nombre del Estudiante"!!</div>
+
+        <!-- Actividades recientes -->
+        <div class="recent-activities">
+            <h3>Actividades Recientes:</h3>
+            <ul>
+                <li>Fecha completa y Hora de la sesión reciente</li>
+                <li>Fecha completa y Hora de la penúltima sesión</li>
+                <li>Fecha completa y Hora de la antepenúltima sesión</li>
+                <li>Fecha completa y Hora de la trasantepenúltima sesión</li>
+            </ul>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-container">
+            <div class="card">
+                <i class="fas fa-table icon"></i>
+                <div class="text">Cantidad total de carpetas reservadas</div>
+            </div>
+            <div class="card">
+                <i class="fas fa-desktop icon"></i>
+                <div class="text">Cantidad total de computadoras reservadas</div>
+            </div>
+            <div class="card">
+                <i class="fas fa-exclamation-circle icon"></i>
+                <div class="text">Cantidad total de incidencias reportadas</div>
+            </div>
+            <div class="card">
+                <i class="fas fa-calendar-times icon"></i>
+                <div class="text">Cantidad total de reservas canceladas</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
