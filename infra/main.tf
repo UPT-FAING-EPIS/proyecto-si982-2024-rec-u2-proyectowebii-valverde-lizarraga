@@ -32,7 +32,6 @@ resource "azurerm_service_plan" "appserviceplan" {
 }
 
 # Aplicación web en Azure App Service
-# Aplicación web en Azure App Service
 resource "azurerm_linux_web_app" "webapp" {
   name                  = "upt-proyecto-valverde-lizarrag"
   location              = azurerm_resource_group.rg.location
@@ -55,7 +54,7 @@ resource "azurerm_dns_zone" "dns" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-# Registro CNAME para la aplicación web
+# Registro  para la aplicación web
 resource "azurerm_dns_cname_record" "cname" {
   name                = "www"
   zone_name           = azurerm_dns_zone.dns.name
@@ -65,22 +64,16 @@ resource "azurerm_dns_cname_record" "cname" {
 }
 
 # Conexión a la base de datos existente en Azure SQL Server
-resource "azurerm_mssql_server" "sqlserver" {
-  name                         = "svrjvalverde"
-  resource_group_name          = azurerm_resource_group.rg.name
-  location                     = azurerm_resource_group.rg.location
-  version                      = "12.0"
-  administrator_login          = var.sqladmin_username
-  administrator_login_password = var.sqladmin_password
+# Uso de data source en lugar de resource para evitar recreación
+
+data "azurerm_mssql_server" "sqlserver" {
+  name                = "svrjvalverde"
+  resource_group_name = "DefaultResourceGroup-CQ"
 }
 
-resource "azurerm_mssql_database" "sqldb" {
-  name           = "BDWEBIIPROYECTO"
-  server_id      = azurerm_mssql_server.sqlserver.id
-  collation      = "SQL_Latin1_General_CP1_CI_AS"
-  license_type   = "LicenseIncluded"
-  max_size_gb    = 5
-  sku_name       = "Basic"
+data "azurerm_mssql_database" "sqldb" {
+  name      = "BDWEBIIPROYECTO"
+  server_id = data.azurerm_mssql_server.sqlserver.id
 }
 
 # Infracost para cálculo de costos
