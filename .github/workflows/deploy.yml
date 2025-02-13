@@ -1,4 +1,4 @@
-name: Construcción infraestructura en Azure
+name: Despliegue de Infraestructura en Azure
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
           cd infra
           terraform import azurerm_resource_group.rg /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/upt-proyecto-valverde-lizarrag || true
           terraform import azurerm_linux_web_app.webapp /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/upt-proyecto-valverde-lizarrag/providers/Microsoft.Web/sites/upt-proyecto-valverde-lizarrag || true
-          terraform import azurerm_mssql_server.sqlserver /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/upt-proyecto-valverde-lizarrag/providers/Microsoft.Sql/servers/svrjvalverde || true
+          terraform import azurerm_dns_zone.dns /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/upt-proyecto-valverde-lizarrag/providers/Microsoft.Network/dnsZones/valverdelizarraga.azurewebsites.net || true
       
       - name: Planificar Terraform
         run: cd infra && terraform plan -var="subscription_id=${{ secrets.SUBSCRIPTION_ID }}" -var="sqladmin_username=${{ secrets.SQL_USER }}" -var="sqladmin_password=${{ secrets.SQL_PASS }}" -no-color -out main.tfplan
@@ -61,41 +61,3 @@ jobs:
         with:
           name: infracost-diagram
           path: infra/infracost-diagram.mmd
-      
-      - name: Setup Terramaid
-        run: |
-            curl -L -o /tmp/terramaid.tar.gz "https://github.com/RoseSecurity/Terramaid/releases/latest/download/Terramaid_Linux_x86_64.tar.gz"
-            tar -xzvf /tmp/terramaid.tar.gz -C /tmp
-            mv -v /tmp/Terramaid /usr/local/bin/terramaid
-            chmod +x /usr/local/bin/terramaid
-      
-      - name: Ejecutar Terramaid
-        run: |
-            cd infra
-            /usr/local/bin/terramaid run
-      
-      - name: Publicar reporte de Terramaid
-        run: |
-            echo "## Terramaid Graph" >> $GITHUB_STEP_SUMMARY
-            cat infra/Terramaid.md >> $GITHUB_STEP_SUMMARY
-      
-      - name: Setup Graphviz
-        uses: ts-graphviz/setup-graphviz@v2        
-      
-      - name: Setup inframap
-        run: |
-            curl -L -o /tmp/inframap.tar.gz "https://github.com/cycloidio/inframap/releases/download/v0.7.0/inframap-linux-amd64.tar.gz"
-            tar -xzvf /tmp/inframap.tar.gz -C /tmp
-            mv -v /tmp/inframap-linux-amd64 /usr/local/bin/inframap
-            chmod +x /usr/local/bin/inframap
-      
-      - name: Generar diagrama con inframap
-        run: |
-            cd infra
-            /usr/local/bin/inframap generate main.tf --raw | dot -Tsvg > inframap_azure.svg
-      
-      - name: Subir diagrama de inframap
-        uses: actions/upload-artifact@v4
-        with:
-          name: inframap_azure.svg
-          path: infra/inframap_azure.svg
