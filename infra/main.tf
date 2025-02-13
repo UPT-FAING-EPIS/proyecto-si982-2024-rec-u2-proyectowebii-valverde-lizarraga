@@ -32,12 +32,21 @@ resource "azurerm_service_plan" "appserviceplan" {
 }
 
 # Aplicación web en Azure App Service
+# Aplicación web en Azure App Service
 resource "azurerm_linux_web_app" "webapp" {
   name                  = "upt-proyecto-valverde-lizarrag"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   service_plan_id       = azurerm_service_plan.appserviceplan.id
   depends_on            = [azurerm_service_plan.appserviceplan]
+
+  site_config {
+    minimum_tls_version = "1.2"
+    always_on           = true
+    application_stack {
+      dotnet_version = "8.0"
+    }
+  }
 }
 
 # Dominio DNS personalizado en Azure
