@@ -1,4 +1,4 @@
-name: Despliegue de Infraestructura en Azure
+name: Construcción infraestructura en Azure
 
 on:
   push:
@@ -61,3 +61,22 @@ jobs:
         with:
           name: infracost-diagram
           path: infra/infracost-diagram.mmd
+      
+      - name: Setup Graphviz
+        uses: ts-graphviz/setup-graphviz@v2
+      
+      - name: Setup inframap
+        run: |
+            curl -L -o /tmp/inframap.tar.gz "https://github.com/cycloidio/inframap/releases/download/v0.7.0/inframap-linux-amd64.tar.gz"
+            tar -xzvf /tmp/inframap.tar.gz -C /tmp
+            mv -v /tmp/inframap-linux-amd64 /usr/local/bin/inframap
+            chmod +x /usr/local/bin/inframap
+      - name: Generar diagrama de infraestructura con inframap
+        run: |
+            cd infra
+            /usr/local/bin/inframap generate main.tf --raw | dot -Tsvg > inframap_azure.svg
+      - name: Subir diagrama de infraestructura
+        uses: actions/upload-artifact@v4
+        with:
+          name: inframap_azure.svg
+          path: infra/inframap_azure.svg
