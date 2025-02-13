@@ -37,12 +37,12 @@ jobs:
           terraform import azurerm_dns_zone.dns /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/upt-proyecto-valverde-lizarrag/providers/Microsoft.Network/dnsZones/valverdelizarraga.azurewebsites.net || true
       
       - name: Planificar Terraform
-        run: cd infra && terraform plan -var="subscription_id=${{ secrets.SUBSCRIPTION_ID }}" -var="sqladmin_username=${{ secrets.SQL_USER }}" -var="sqladmin_password=${{ secrets.SQL_PASS }}" -no-color -out main.tfplan
+        run: cd infra && terraform plan -var="subscription_id=${{ secrets.SUBSCRIPTION_ID }}" -no-color -out main.tfplan
       
       - name: Aplicar Terraform
         run: |
           cd infra
-          terraform apply -var="subscription_id=${{ secrets.SUBSCRIPTION_ID }}" -var="sqladmin_username=${{ secrets.SQL_USER }}" -var="sqladmin_password=${{ secrets.SQL_PASS }}" -auto-approve main.tfplan
+          terraform apply -var="subscription_id=${{ secrets.SUBSCRIPTION_ID }}" -auto-approve main.tfplan
       
       - name: Setup infracost
         uses: infracost/actions/setup@v3
