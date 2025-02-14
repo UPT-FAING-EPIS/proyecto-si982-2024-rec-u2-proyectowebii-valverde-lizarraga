@@ -1,103 +1,103 @@
-terraform { 
+terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 4.0.0"
     }
-    null = {
-      source = "hashicorp/null"
-    }
   }
   required_version = ">= 0.14.9"
 }
 
+variable "suscription_id" {
+    type = string
+    description = "83fff94f-ea6d-44c3-a294-e78a99bee2f9"
+}
+
+variable "sqladmin_username" {
+    type = string
+    description = "jeanvalverde"
+}
+
+variable "sqladmin_password" {
+    type = string
+    description = "valverde24c++"
+}
+
 provider "azurerm" {
-  features {}
-  subscription_id = var.subscription_id
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
+  subscription_id = var.suscription_id
 }
 
-# Grupo de recursos en Azure con nombre fijo
+resource "random_integer" "ri" {
+  min = 100
+  max = 999
+}
+
 resource "azurerm_resource_group" "rg" {
-  name     = "upt-proyecto-valverde-lizarrag"
-  location = "westus"
+  name     = "proyecto-arg-${random_integer.ri.result}"
+  location = "westus2"
 }
 
-# Plan de servicio de aplicaciones
 resource "azurerm_service_plan" "appserviceplan" {
-  name                = "upt-proyecto-valverde-lizarrag"
+  name                = "proyecto-asp-${random_integer.ri.result}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
-  sku_name            = "B1"
+  sku_name            = "F1"
 }
 
-# Aplicación web en Azure App Service
 resource "azurerm_linux_web_app" "webapp" {
-  name                  = "upt-proyecto-valverde-lizarrag"
+  name                  = "proyecto-awa-${random_integer.ri.result}"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   service_plan_id       = azurerm_service_plan.appserviceplan.id
   depends_on            = [azurerm_service_plan.appserviceplan]
-
+  
   site_config {
     minimum_tls_version = "1.2"
-    always_on           = true
+    always_on = false
     application_stack {
-      dotnet_version = "8.0"
+      docker_image_name = "patrickcuadros/shorten:latest"
+      docker_registry_url = "https://index.docker.io"      
     }
   }
 }
 
-# Dominio DNS personalizado en Azure
+resource "azurerm_mssql_server" "sqlsrv" {
+  name                         = "proyecto-dbs-${random_integer.ri.result}"
+  resource_group_name          = azurerm_resource_group.rg.name
+  location                     = azurerm_resource_group.rg.location
+  version                      = "12.0"
+  administrator_login          = var.sqladmin_username
+  administrator_login_password = var.sqladmin_password
+}
+
+resource "azurerm_mssql_firewall_rule" "sqlaccessrule" {
+  name             = "PublicAccess"
+  server_id        = azurerm_mssql_server.sqlsrv.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "255.255.255.255"
+}
+
+resource "azurerm_mssql_database" "sqldb" {
+  name      = "shorten"
+  server_id = azurerm_mssql_server.sqlsrv.id
+  sku_name  = "Free"
+}
+
 resource "azurerm_dns_zone" "dns" {
-  name                = "valverdelizarraga.azurewebsites.net"
+  name                = "proyecto-dns-${random_integer.ri.result}.com"
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-# Registro  para la aplicación web
 resource "azurerm_dns_cname_record" "cname" {
   name                = "www"
   zone_name           = azurerm_dns_zone.dns.name
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
   record              = azurerm_linux_web_app.webapp.default_hostname
-}
-
-# Conexión a la base de datos existente en Azure SQL Server
-# Uso de data source en lugar de resource para evitar recreación
-
-data "azurerm_mssql_server" "sqlserver" {
-  name                = "svrjvalverde"
-  resource_group_name = "DefaultResourceGroup-CQ"
-}
-
-data "azurerm_mssql_database" "sqldb" {
-  name      = "BDWEBIIPROYECTO"
-  server_id = data.azurerm_mssql_server.sqlserver.id
-}
-
-# Infracost para cálculo de costos
-resource "null_resource" "infracost" {
-  provisioner "local-exec" {
-    command = <<EOT
-      infracost breakdown --path . --format table
-    EOT
-  }
-}
-
-# Variables para manejar recursos existentes
-variable "subscription_id" {
-  description = "ID de la suscripción de Azure"
-  type        = string
-}
-
-variable "sqladmin_username" {
-  description = "Usuario administrador de SQL Server"
-  type        = string
-}
-
-variable "sqladmin_password" {
-  description = "Contraseña del usuario administrador de SQL Server"
-  type        = string
-  sensitive   = true
 }
