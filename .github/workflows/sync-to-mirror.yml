@@ -1,42 +1,30 @@
-name: Sync to Mirror Repo
+name: Sync to Mirror Repository
 
 on:
   push:
-    paths:
-      - 'GestionReservasWebII/**'
-      - '*.sln'  # Si se actualiza la solución
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
-  sync:
+  mirror_repo:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout del código
+      - name: Checkout del repositorio
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Configurar Git
+      - name: Configurar credenciales de Git
         run: |
+          git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
 
-      - name: Agregar el repositorio espejo como remoto
+      - name: Agregar repositorio espejo como remoto
         run: |
-          git remote add mirror ${{ secrets.REPO_ESPEJO }}
-          git fetch mirror || echo "No se pudo recuperar el remoto, es posible que aún no exista."
-
-      - name: Filtrar solo los archivos necesarios
-        run: |
-          git checkout -b sync-branch
-          git filter-branch --prune-empty --subdirectory-filter GestionReservasWebII HEAD
-
-      - name: Agregar y hacer commit de cambios
-        run: |
-          git add .
-          git commit -m "Sync: Actualización de GestionReservasWebII y archivos de solución" || echo "No hay cambios para enviar"
+          git remote add mirror https://JeanValverde24:${{ secrets.secret_git_pat }}@github.com/JeanValverde24/Proyecto_Rec_Espejo.git
+          git fetch mirror
 
       - name: Enviar cambios al repositorio espejo
         run: |
-          git push --force mirror sync-branch:main
+          git push --force mirror main
