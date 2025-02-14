@@ -24,18 +24,18 @@ jobs:
 
       - name: Clone mirror repository
         run: |
-          git clone ${{ secrets.REPO_ESPEJO }} repo_mirror
-          cd repo_mirror
+          git clone ${{ secrets.REPO_ESPEJO }} Proyecto_Rec_Espejo
+          cd Proyecto_Rec_Espejo
           git checkout main || git checkout -b main
 
       - name: Copy changes to mirror repository
         run: |
-          rsync -av --delete GestionReservasWebII/ repo_mirror/GestionReservasWebII/
-          cp GestionReservasWebII.sln repo_mirror/GestionReservasWebII.sln
+          rsync -av --delete GestionReservasWebII/ Proyecto_Rec_Espejo/GestionReservasWebII/
+          cp GestionReservasWebII.sln Proyecto_Rec_Espejo/GestionReservasWebII.sln
 
       - name: Commit and push changes to mirror repository
         run: |
-          cd repo_mirror
+          cd Proyecto_Rec_Espejo
           git add GestionReservasWebII/ GestionReservasWebII.sln
           if git diff --staged --quiet; then
             echo "No changes detected. Skipping commit and push."
