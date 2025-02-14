@@ -1,30 +1,59 @@
-name: Sync to Mirror Repository
+name: Sync Specific Changes to Mirror
 
 on:
   push:
     branches:
-      - main
+      - main  # Se ejecuta solo cuando hay cambios en la rama principal
 
 jobs:
-  mirror_repo:
+  sync-repo:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout del repositorio
-        uses: actions/checkout@v3
+      - name: Checkout del repositorio principal
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Para obtener el historial completo
 
-      - name: Configurar credenciales de Git
+      - name: Configurar usuario de Git
         run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "GitHub Actions"
+          git config --global user.email "jv2020066920@virtual.upt.pe"
+          git config --global user.name "JeanValverde24"
 
-      - name: Agregar repositorio espejo como remoto
+      - name: Filtrar solo los cambios en 'GestionReservasWebII' y '.sln'
         run: |
-          git remote add mirror https://JeanValverde24:${{ secrets.SECRET_GIT_PAT }}@github.com/JeanValverde24/Proyecto_Rec_Espejo.git
-          git fetch mirror
+          git diff --name-only HEAD~1 HEAD > changed_files.txt
+          echo "Archivos modificados:"
+          cat changed_files.txt
+          
+          # Filtrar archivos que sean solo de GestionReservasWebII o la solución .sln
+          grep -E '^(GestionReservasWebII/|[^/]+\.sln$)' changed_files.txt > files_to_commit.txt || true
+          echo "Archivos a sincronizar:"
+          cat files_to_commit.txt
 
-      - name: Enviar cambios al repositorio espejo
+      - name: Clonar repositorio espejo
         run: |
-          git push --force mirror main
+          git clone https://JeanValverde24:${{ secrets.SECRET_GIT_PAT }}@github.com/JeanValverde24/Proyecto_Rec_Espejo.git repo_espejo
+          cd repo_espejo
+          git checkout main
+
+      - name: Copiar solo los archivos filtrados al espejo
+        run: |
+          cd repo_espejo
+          while read file; do
+            if [[ -f "../$file" || -d "../$file" ]]; then
+              mkdir -p "$(dirname "$file")"
+              cp -r "../$file" "$file"
+            fi
+          done < ../files_to_commit.txt
+
+      - name: Confirmar y enviar los cambios al espejo
+        run: |
+          cd repo_espejo
+          git add .
+          if git diff --cached --quiet; then
+            echo "No hay cambios que sincronizar."
+            exit 0
+          fi
+          git commit -m "Sync: Actualización de GestionReservasWebII y solución"
+          git push --force origin main
