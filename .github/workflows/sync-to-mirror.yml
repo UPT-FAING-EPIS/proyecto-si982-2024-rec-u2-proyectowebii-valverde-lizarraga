@@ -27,12 +27,13 @@ jobs:
       - name: Copy changes to mirror repository
         run: |
           echo "📂 Syncing changes..."
-          rsync -av --delete GestionReservasWebII/ GestionReservasWebII/
-          cp GestionReservasWebII.sln GestionReservasWebII.sln
+          rsync -av --delete GestionReservasWebII/ .
+          echo "✅ Sync completed."
 
       - name: Commit and push changes to mirror repository
         run: |
-          git add GestionReservasWebII/ GestionReservasWebII.sln
+          git add GestionReservasWebII/
+          git add GestionReservasWebII.sln
           if git diff --staged --quiet; then
             echo "✅ No changes detected. Skipping commit and push."
             exit 0
