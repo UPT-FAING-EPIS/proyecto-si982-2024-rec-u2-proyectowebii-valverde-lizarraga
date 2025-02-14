@@ -21,28 +21,17 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-
-      - name: Clone mirror repository
-        run: |
-          echo "🔍 Cloning repository..."
-          git clone ${{ secrets.REPO_ESPEJO }} Proyecto_Rec_Espejo || { echo "❌ Failed to clone repo"; exit 1; }
-          echo "📂 Listing current directory:"
-          ls -la
-          echo "📂 Moving into Proyecto_Rec_Espejo"
-          cd Proyecto_Rec_Espejo && git checkout main || git checkout -b main
-        shell: bash
+          git remote add mirror ${{ secrets.REPO_ESPEJO }}
+          git fetch mirror
 
       - name: Copy changes to mirror repository
         run: |
           echo "📂 Syncing changes..."
-          rsync -av --delete GestionReservasWebII/ Proyecto_Rec_Espejo/GestionReservasWebII/
-          cp GestionReservasWebII.sln Proyecto_Rec_Espejo/GestionReservasWebII.sln
+          rsync -av --delete GestionReservasWebII/ GestionReservasWebII/
+          cp GestionReservasWebII.sln GestionReservasWebII.sln
 
       - name: Commit and push changes to mirror repository
         run: |
-          cd Proyecto_Rec_Espejo
-          echo "📂 Listing files in mirror repository:"
-          ls -la
           git add GestionReservasWebII/ GestionReservasWebII.sln
           if git diff --staged --quiet; then
             echo "✅ No changes detected. Skipping commit and push."
@@ -51,6 +40,6 @@ jobs:
           echo "📌 Committing changes..."
           git commit -m "Mirror changes from main repository"
           echo "🚀 Pushing to mirror repository..."
-          git push origin main
+          git push mirror main
         env:
           GIT_PAT: ${{ secrets.SECRET_GIT_PAT }}
