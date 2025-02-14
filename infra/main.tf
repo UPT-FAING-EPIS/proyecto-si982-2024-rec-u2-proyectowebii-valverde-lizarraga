@@ -39,7 +39,7 @@ resource "random_integer" "ri" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "proyecto-arg-${random_integer.ri.result}"
-  location = "westus2"
+  location = "eastus2"
 }
 
 resource "azurerm_service_plan" "appserviceplan" {
