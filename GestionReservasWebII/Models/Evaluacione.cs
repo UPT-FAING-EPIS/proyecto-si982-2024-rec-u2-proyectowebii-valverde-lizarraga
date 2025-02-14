@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace GestionReservasWebII.Models;
-
+//asdsa
 public partial class Evaluacione
 {
     public int EvaluacionId { get; set; }
