@@ -1,46 +1,42 @@
-name: Sync Changes to Mirror Repository
+name: Sync to Mirror Repo
 
 on:
   push:
-    branches:
-      - main
     paths:
       - 'GestionReservasWebII/**'
-      - 'GestionReservasWebII.sln'
+      - '*.sln'  # Si se actualiza la solución
+  workflow_dispatch:
 
 jobs:
-  sync_to_mirror:
-    name: Sync Changes to Mirror Repo
+  sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout del código
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Configure Git
+      - name: Configurar Git
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Agregar el repositorio espejo como remoto
+        run: |
           git remote add mirror ${{ secrets.REPO_ESPEJO }}
-          git fetch mirror
+          git fetch mirror || echo "No se pudo recuperar el remoto, es posible que aún no exista."
 
-      - name: Copy changes to mirror repository
+      - name: Filtrar solo los archivos necesarios
         run: |
-          echo "📂 Syncing changes..."
-          rsync -av --delete GestionReservasWebII/ .
-          echo "✅ Sync completed."
+          git checkout -b sync-branch
+          git filter-branch --prune-empty --subdirectory-filter GestionReservasWebII HEAD
 
-      - name: Commit and push changes to mirror repository
+      - name: Agregar y hacer commit de cambios
         run: |
-          git add GestionReservasWebII/
-          git add GestionReservasWebII.sln
-          if git diff --staged --quiet; then
-            echo "✅ No changes detected. Skipping commit and push."
-            exit 0
-          fi
-          echo "📌 Committing changes..."
-          git commit -m "Mirror changes from main repository"
-          echo "🚀 Pushing to mirror repository..."
-          git push mirror main
-        env:
-          GIT_PAT: ${{ secrets.SECRET_GIT_PAT }}
+          git add .
+          git commit -m "Sync: Actualización de GestionReservasWebII y archivos de solución" || echo "No hay cambios para enviar"
+
+      - name: Enviar cambios al repositorio espejo
+        run: |
+          git push --force mirror sync-branch:main
