@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionReservasWebII", "GestionReservasWebII\GestionReservasWebII.csproj", "{44655A3D-51F7-4B98-BB81-78D6CAA8EEDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionReservasWebII.Tests", "GestionReservasWebII.Tests\GestionReservasWebII.Tests.csproj", "{A4A6A94B-ACFD-4466-A764-C5D04631C784}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{44655A3D-51F7-4B98-BB81-78D6CAA8EEDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44655A3D-51F7-4B98-BB81-78D6CAA8EEDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44655A3D-51F7-4B98-BB81-78D6CAA8EEDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A6A94B-ACFD-4466-A764-C5D04631C784}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A6A94B-ACFD-4466-A764-C5D04631C784}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A6A94B-ACFD-4466-A764-C5D04631C784}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A6A94B-ACFD-4466-A764-C5D04631C784}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

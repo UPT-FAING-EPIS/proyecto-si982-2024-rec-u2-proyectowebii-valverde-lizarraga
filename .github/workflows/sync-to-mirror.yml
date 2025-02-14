@@ -20,14 +20,14 @@ jobs:
           git config --global user.email "jv2020066920@virtual.upt.pe"
           git config --global user.name "JeanValverde24"
 
-      - name: Filtrar solo los cambios en 'GestionReservasWebII' y '.sln'
+      - name: Filtrar solo los cambios en 'GestionReservasWebII', 'GestionReservasWebII.Tests' y '.sln'
         run: |
           git diff --name-only HEAD~1 HEAD > changed_files.txt
           echo "Archivos modificados:"
           cat changed_files.txt
           
-          # Filtrar archivos que sean solo de GestionReservasWebII o la solución .sln
-          grep -E '^(GestionReservasWebII/|[^/]+\.sln$)' changed_files.txt > files_to_commit.txt || true
+          # Filtrar archivos que sean de GestionReservasWebII, GestionReservasWebII.Tests o la solución .sln
+          grep -E '^(GestionReservasWebII/|GestionReservasWebII.Tests/|[^/]+\.sln$)' changed_files.txt > files_to_commit.txt || true
           echo "Archivos a sincronizar:"
           cat files_to_commit.txt
 
@@ -55,5 +55,5 @@ jobs:
             echo "No hay cambios que sincronizar."
             exit 0
           fi
-          git commit -m "Sync: Actualización de GestionReservasWebII y solución"
+          git commit -m "Sync: Actualización de GestionReservasWebII, GestionReservasWebII.Tests y solución"
           git push --force origin main
