@@ -1,0 +1,47 @@
+name: Sync Changes to Mirror Repository
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'GestionReservasWebII/**'
+      - 'GestionReservasWebII.sln'
+
+jobs:
+  sync_to_mirror:
+    name: Sync Changes to Mirror Repo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Clone mirror repository
+        run: |
+          git clone ${{ secrets.REPO_ESPEJO }} repo_mirror
+          cd repo_mirror
+          git checkout main || git checkout -b main
+
+      - name: Copy changes to mirror repository
+        run: |
+          rsync -av --delete GestionReservasWebII/ repo_mirror/GestionReservasWebII/
+          cp GestionReservasWebII.sln repo_mirror/GestionReservasWebII.sln
+
+      - name: Commit and push changes to mirror repository
+        run: |
+          cd repo_mirror
+          git add GestionReservasWebII/ GestionReservasWebII.sln
+          if git diff --staged --quiet; then
+            echo "No changes detected. Skipping commit and push."
+            exit 0
+          fi
+          git commit -m "Mirror changes from main repository"
+          git push origin main
+        env:
+          GIT_PAT: ${{ secrets.SECRET_GIT_PAT }}
