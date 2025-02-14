@@ -22,7 +22,7 @@ jobs:
 
       - name: Agregar repositorio espejo como remoto
         run: |
-          git remote add mirror https://JeanValverde24:${{ secrets.secret_git_pat }}@github.com/JeanValverde24/Proyecto_Rec_Espejo.git
+          git remote add mirror https://JeanValverde24:${{ secrets.SECRET_GIT_PAT }}@github.com/JeanValverde24/Proyecto_Rec_Espejo.git
           git fetch mirror
 
       - name: Enviar cambios al repositorio espejo
