@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-//ejemplosasdas
+//ejemplosasdasdsadsacls
 namespace GestionReservasWebII.Models;
 
 public partial class HistorialNormativa
