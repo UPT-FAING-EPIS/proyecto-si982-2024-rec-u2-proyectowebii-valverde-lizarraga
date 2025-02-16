@@ -15,7 +15,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write  # Permite autenticación sin contraseña
+  id-token: write  
 
 jobs:
   deploy_infra:
