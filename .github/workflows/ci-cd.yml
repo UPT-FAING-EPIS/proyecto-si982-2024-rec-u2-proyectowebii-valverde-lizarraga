@@ -52,7 +52,7 @@ jobs:
           docker build -f GestionReservasWebII/Dockerfile . --tag ghcr.io/jeanvalverde24/shorten:${{ github.sha }}
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-    deploy_infra:
+  deploy_infra:
     runs-on: ubuntu-latest
     needs: build  # Se asegura que la imagen Docker se haya publicado antes
     steps:
