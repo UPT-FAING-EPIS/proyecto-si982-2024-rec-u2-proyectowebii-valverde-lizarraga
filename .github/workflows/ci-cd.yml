@@ -67,7 +67,7 @@ jobs:
       - name: Crear terraform.tfvars
         run: |
           cd infra
-          echo "subscription_id=\"${{ secrets.SUBSCRIPTION_ID }}\"" > terraform.tfvars
+          echo "suscription_id=\"${{ secrets.SUBSCRIPTION_ID }}\"" > terraform.tfvars
           echo "sqladmin_username=\"${{ secrets.SQL_USER }}\"" >> terraform.tfvars
           echo "sqladmin_password=\"${{ secrets.SQL_PASS }}\"" >> terraform.tfvars
 
