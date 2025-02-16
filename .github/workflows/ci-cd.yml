@@ -49,7 +49,7 @@ jobs:
 
       - name: Construir y publicar imagen Docker desde GestionReservasWebII
         run: |
-          docker build ./GestionReservasWebII --tag ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker build -f GestionReservasWebII/Dockerfile . --tag ghcr.io/jeanvalverde24/shorten:${{ github.sha }}
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
   deploy_infra:
