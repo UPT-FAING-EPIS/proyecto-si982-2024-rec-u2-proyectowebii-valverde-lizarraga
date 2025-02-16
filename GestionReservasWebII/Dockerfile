@@ -9,7 +9,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["GestionReservasWebII/GestionReservasWebII.csproj", "GestionReservasWebII/"]
+COPY ["GestionReservasWebII.csproj", "GestionReservasWebII/"]
 RUN dotnet restore "./GestionReservasWebII.csproj"
 COPY . .
 WORKDIR "/src/GestionReservasWebII"
