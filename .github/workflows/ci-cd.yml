@@ -98,7 +98,7 @@ jobs:
         run: |
           dot -Tpng deployment.dot -o deployment.png || echo "❌ Error en la generación del diagrama PNG."
 
-      - name: Subir diagrama de despliegue como artefacto
+      - name: Subir artefactos del diagrama de despliegue
         uses: actions/upload-artifact@v4
         with:
           name: diagrama_de_despliegue
@@ -108,15 +108,15 @@ jobs:
 
       - name: Publicar Diagrama en Summary
         run: |
-          echo "## Diagrama de Despliegue" >> $GITHUB_STEP_SUMMARY
+          echo "## 📌 Diagrama de Despliegue" >> $GITHUB_STEP_SUMMARY
           echo '<details><summary>Ver Diagrama JSON</summary>' >> $GITHUB_STEP_SUMMARY
           echo '```json' >> $GITHUB_STEP_SUMMARY
           cat diagrama_de_despliegue.json >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           echo "</details>" >> $GITHUB_STEP_SUMMARY
-          echo "![](deployment.png)" >> $GITHUB_STEP_SUMMARY
+          echo "![Diagrama de Despliegue](deployment.png)" >> $GITHUB_STEP_SUMMARY
 
       - name: Publicar URL de la Web en el Summary
         run: |
-          echo "## Aplicación Desplegada" >> $GITHUB_STEP_SUMMARY
+          echo "## 🌐 Aplicación Desplegada" >> $GITHUB_STEP_SUMMARY
           echo "[Acceder a la Web App](https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
