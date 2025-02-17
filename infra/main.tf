@@ -67,14 +67,14 @@ resource "azurerm_linux_web_app" "webapp" {
   }
 }
 
-resource "azurerm_mssql_server" "sqlsrv" {
-  name                         = "proyecto-dbs-${random_integer.ri.result}"
-  resource_group_name          = azurerm_resource_group.rg.name
-  location                     = azurerm_resource_group.rg.location
-  version                      = "12.0"
-  administrator_login          = var.sqladmin_username
-  administrator_login_password = var.sqladmin_password
+resource "azurerm_mssql_database" "sqldb" {
+  name                = "proyecto-dbs-161"  
+  server_id          = azurerm_mssql_server.sqlsrv.id
+  collation          = "SQL_Latin1_General_CP1_CI_AS"
+  max_size_gb        = 2
+  sku_name           = "Basic"
 }
+
 
 resource "azurerm_mssql_firewall_rule" "sqlaccessrule" {
   name             = "PublicAccess"
