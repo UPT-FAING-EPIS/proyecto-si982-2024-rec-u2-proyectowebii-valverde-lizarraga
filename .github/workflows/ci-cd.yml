@@ -102,7 +102,7 @@ jobs:
           dot -Tpng lab_01.dot -o lab_01.png
 
       - name: Subir imagen generada como artefacto
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: diagrama-arm
           path: lab_01.png
