@@ -9,7 +9,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'GestionReservasWebII/**'  # Solo se ejecuta si hay cambios en el código fuente
+      - 'GestionReservasWebII/**'
   workflow_dispatch:
 
 permissions:
@@ -45,7 +45,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
-      - name: Construir y publicar imagen Docker desde GestionReservasWebII
+      - name: Construir y publicar imagen Docker
         run: |
           docker build -f GestionReservasWebII/Dockerfile . --tag ${{ env.IMAGE_NAME }}:${{ github.sha }}
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
@@ -66,14 +66,8 @@ jobs:
       - name: Login en Azure con Usuario y Contraseña
         run: |
           az login -u ${{ secrets.AZURE_USERNAME }} -p ${{ secrets.AZURE_PASSWORD }} --output none
-          echo "🔹 Sesión iniciada en Azure"
-
-          # Forzar el uso de la suscripción correcta
           az account set --subscription 83fff94f-ea6d-44c3-a294-e78a99bee2f9
-          echo "✅ Suscripción establecida a 83fff94f-ea6d-44c3-a294-e78a99bee2f9"
-
-          # Verificar suscripción
-          az account show
+          echo "✅ Suscripción establecida correctamente."
 
       - name: Verificar si el App Service existe antes de desplegar
         run: |
@@ -90,10 +84,19 @@ jobs:
         run: |
           az group export -n arg-proyecto-valverde-lizarraga --output json > diagrama_de_despliegue.json || echo "❌ Advertencia: Algunos recursos no se exportaron."
 
-      - name: Generar Diagrama de Despliegue (PNG)
+      - name: Instalar Graphviz
+        run: |
+          sudo apt update
+          sudo apt install graphviz -y
+
+      - name: Generar Diagrama de Despliegue (DOT)
         run: |
           az graph query -q "Resources | where resourceGroup == 'arg-proyecto-valverde-lizarraga'" --output table > deployment.dot
-          dot -Tpng deployment.dot -o deployment.png || echo "❌ Error en la generación del diagrama"
+          cat deployment.dot  # Mostrar contenido para debug
+
+      - name: Convertir DOT a PNG
+        run: |
+          dot -Tpng deployment.dot -o deployment.png || echo "❌ Error en la generación del diagrama PNG."
 
       - name: Subir diagrama de despliegue como artefacto
         uses: actions/upload-artifact@v4
