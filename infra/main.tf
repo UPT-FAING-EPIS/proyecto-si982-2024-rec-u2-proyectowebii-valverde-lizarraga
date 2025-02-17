@@ -93,7 +93,7 @@ resource "azurerm_dns_zone" "dns" {
   name                = "proyecto-dns-${random_integer.ri.result}.com"
   resource_group_name = azurerm_resource_group.rg.name
 }
-
+# dsadsasdasdadsad
 resource "azurerm_dns_cname_record" "cname" {
   name                = "www"
   zone_name           = azurerm_dns_zone.dns.name
