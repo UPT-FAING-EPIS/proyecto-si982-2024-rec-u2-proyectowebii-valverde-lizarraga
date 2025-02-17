@@ -9,7 +9,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'GestionReservasWebII/**'
+      - 'GestionReservasWebII/**'  # Solo se ejecuta si hay cambios en el código fuente
   workflow_dispatch:
 
 permissions:
@@ -51,8 +51,14 @@ jobs:
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
   deploy:
+    permissions:
+      contents: none
     runs-on: ubuntu-latest
     needs: build
+    environment:
+      name: 'Development'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
@@ -60,21 +66,14 @@ jobs:
       - name: Login en Azure con Usuario y Contraseña
         run: |
           az login -u ${{ secrets.AZURE_USERNAME }} -p ${{ secrets.AZURE_PASSWORD }} --output none
-          
-          # Obtener la lista de suscripciones
-          SUBSCRIPTION_LIST=$(az account list --query "[].id" -o tsv)
-          
-          # Obtener la segunda suscripción
-          SECOND_SUBSCRIPTION_ID=$(echo "$SUBSCRIPTION_LIST" | sed -n 2p)
-          
-          # Si no se encuentra la segunda suscripción, usar el secreto definido
-          if [ -z "$SECOND_SUBSCRIPTION_ID" ]; then
-            SECOND_SUBSCRIPTION_ID="${{ secrets.SUBSCRIPTION_ID }}"
-          fi
-          
-          # Establecer la suscripción activa
-          az account set --subscription $SECOND_SUBSCRIPTION_ID
-          echo "✅ Usando la suscripción: $SECOND_SUBSCRIPTION_ID"
+          echo "🔹 Sesión iniciada en Azure"
+
+          # Forzar el uso de la suscripción correcta
+          az account set --subscription 83fff94f-ea6d-44c3-a294-e78a99bee2f9
+          echo "✅ Suscripción establecida a 83fff94f-ea6d-44c3-a294-e78a99bee2f9"
+
+          # Verificar suscripción
+          az account show
 
       - name: Verificar si el App Service existe antes de desplegar
         run: |
@@ -87,51 +86,34 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           images: ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-      - name: Agregar URL al Summary
+      - name: Generar Diagrama de Despliegue (JSON)
         run: |
-          echo "## ✅ Despliegue Completado" >> $GITHUB_STEP_SUMMARY
-          echo "**La aplicación está disponible en:**" >> $GITHUB_STEP_SUMMARY
-          echo "[🔗 http://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net](http://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
-
-  generate-diagram:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-
-      - name: Instalar herramientas necesarias
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y graphviz jq
-
-      - name: Instalar extensión de Azure Resource Graph
-        run: |
-          az extension add --name resource-graph
-
-      - name: Generar Diagrama de Despliegue en PNG
-        run: |
-          # Exportar recursos del grupo en formato JSON
           az group export -n arg-proyecto-valverde-lizarraga --output json > diagrama_de_despliegue.json || echo "❌ Advertencia: Algunos recursos no se exportaron."
 
-          # Generar la consulta de recursos en formato JSON
-          az graph query -q "Resources | where resourceGroup == 'arg-proyecto-valverde-lizarraga'" --output json > deployment.json || exit 1
-          
-          # Convertir JSON a DOT (Graphviz)
-          echo "digraph Deployment {" > deployment.dot
-          cat deployment.json | jq -r '.data[] | "\"" + .name + "\" -> \"" + .type + "\";"' >> deployment.dot
-          echo "}" >> deployment.dot
-
-          # Convertir el diagrama DOT a PNG
-          dot -Tpng deployment.dot -o deployment.png
+      - name: Generar Diagrama de Despliegue (PNG)
+        run: |
+          az graph query -q "Resources | where resourceGroup == 'arg-proyecto-valverde-lizarraga'" --output table > deployment.dot
+          dot -Tpng deployment.dot -o deployment.png || echo "❌ Error en la generación del diagrama"
 
       - name: Subir diagrama de despliegue como artefacto
         uses: actions/upload-artifact@v4
         with:
           name: diagrama_de_despliegue
-          path: deployment.png
+          path: |
+            diagrama_de_despliegue.json
+            deployment.png
 
       - name: Publicar Diagrama en Summary
         run: |
-          echo "## 📌 Diagrama de Despliegue" >> $GITHUB_STEP_SUMMARY
-          echo "![Diagrama de Despliegue](deployment.png)" >> $GITHUB_STEP_SUMMARY
+          echo "## Diagrama de Despliegue" >> $GITHUB_STEP_SUMMARY
+          echo '<details><summary>Ver Diagrama JSON</summary>' >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          cat diagrama_de_despliegue.json >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
+          echo "![](deployment.png)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Publicar URL de la Web en el Summary
+        run: |
+          echo "## Aplicación Desplegada" >> $GITHUB_STEP_SUMMARY
+          echo "[Acceder a la Web App](https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
