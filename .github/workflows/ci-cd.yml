@@ -61,27 +61,33 @@ jobs:
         run: |
           az login -u ${{ secrets.AZURE_USERNAME }} -p ${{ secrets.AZURE_PASSWORD }}
           
-          # Obtener las suscripciones disponibles
-          az account list --output table
+          # Usar la segunda suscripción automáticamente
+          SECOND_SUBSCRIPTION_ID=$(az account list --query "[1].id" -o tsv || echo "")
           
-          # Obtener el segundo ID de suscripción
-          SECOND_SUBSCRIPTION_ID=$(az account list --query "[1].id" -o tsv)
+          # Si no se encuentra la segunda suscripción, usar el secreto definido
+          if [ -z "$SECOND_SUBSCRIPTION_ID" ]; then
+            SECOND_SUBSCRIPTION_ID="${{ secrets.SUBSCRIPTION_ID }}"
+          fi
           
-          # Configurar la segunda suscripción como activa
+          # Establecer la suscripción activa
           az account set --subscription $SECOND_SUBSCRIPTION_ID
-          
-          # Verificar la suscripción actual
-          az account show
 
       - name: Verificar si el App Service existe antes de desplegar
         run: |
           az webapp show --resource-group arg-proyecto-valverde-lizarraga --name app-proyecto-valverde-lizarraga || exit 1
 
       - name: Desplegar a Azure Web App con Docker
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           images: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Agregar URL al Summary
+        run: |
+          echo "## ✅ Despliegue Completado" >> $GITHUB_STEP_SUMMARY
+          echo "**La aplicación está disponible en:**" >> $GITHUB_STEP_SUMMARY
+          echo "[🔗 http://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net](http://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net)" >> $GITHUB_STEP_SUMMARY
 
   generate-diagram:
     runs-on: ubuntu-latest
@@ -95,14 +101,23 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y graphviz jq
 
+      - name: Instalar extensión de Azure Resource Graph
+        run: |
+          az extension add --name resource-graph
+
       - name: Generar Diagrama de Despliegue en PNG
         run: |
           # Exportar recursos del grupo en formato JSON
           az group export -n arg-proyecto-valverde-lizarraga --output json > diagrama_de_despliegue.json || echo "❌ Advertencia: Algunos recursos no se exportaron."
 
-          # Generar el diagrama en formato DOT
-          az graph query -q "Resources | where resourceGroup == 'arg-proyecto-valverde-lizarraga'" --output graph > deployment.dot || exit 1
+          # Generar la consulta de recursos en formato JSON
+          az graph query -q "Resources | where resourceGroup == 'arg-proyecto-valverde-lizarraga'" --output json > deployment.json || exit 1
           
+          # Convertir JSON a DOT (Graphviz)
+          echo "digraph Deployment {" > deployment.dot
+          cat deployment.json | jq -r '.data[] | "\"" + .name + "\" -> \"" + .type + "\";"' >> deployment.dot
+          echo "}" >> deployment.dot
+
           # Convertir el diagrama DOT a PNG
           dot -Tpng deployment.dot -o deployment.png
 
