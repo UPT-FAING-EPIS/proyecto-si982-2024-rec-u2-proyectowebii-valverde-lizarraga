@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace GestionReservasWebII.Models;
-//ejemplosfdsfdsfds
+//ejemplosfdsfdsfdsdas
 public partial class Incidencia
 {
     public int IncidenciaId { get; set; }
