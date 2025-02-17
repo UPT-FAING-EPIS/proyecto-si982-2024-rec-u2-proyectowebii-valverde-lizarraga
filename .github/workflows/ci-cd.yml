@@ -1,153 +1,153 @@
-name: Construcción y Despliegue en Azure
+# name: Construcción y Despliegue en Azure
 
-env:
-  AZURE_WEBAPP_NAME: proyecto-awa-326  # Nombre de la aplicación
-  DOTNET_VERSION: '8'  # Versión de .NET
-  IMAGE_NAME: ghcr.io/jeanvalverde24/shorten
+# env:
+#   AZURE_WEBAPP_NAME: proyecto-awa-326  # Nombre de la aplicación
+#   DOTNET_VERSION: '8'  # Versión de .NET
+#   IMAGE_NAME: ghcr.io/jeanvalverde24/shorten
 
-on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - 'GestionReservasWebII/**'  # Se detectan cambios en la carpeta del código fuente
-      - 'infra/**'  # Se detectan cambios en la infraestructura Terraform
-      - '.github/workflows/**'
-  workflow_dispatch:
+# on:
+#   push:
+#     branches: [ "main" ]
+#     paths:
+#       - 'GestionReservasWebII/**'  # Se detectan cambios en la carpeta del código fuente
+#       - 'infra/**'  # Se detectan cambios en la infraestructura Terraform
+#       - '.github/workflows/**'
+#   workflow_dispatch:
 
-permissions:
-  contents: read
-  packages: write
-  id-token: write
+# permissions:
+#   contents: read
+#   packages: write
+#   id-token: write
 
-jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
+# jobs:
+#   scan:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout del código
+#         uses: actions/checkout@v4
 
-      - name: Escaneo de Terraform con Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'config'
-          scan-ref: './infra'
-          severity: 'HIGH,CRITICAL'
+#       - name: Escaneo de Terraform con Trivy
+#         uses: aquasecurity/trivy-action@master
+#         with:
+#           scan-type: 'config'
+#           scan-ref: './infra'
+#           severity: 'HIGH,CRITICAL'
 
-  build:
-    runs-on: ubuntu-latest
-    needs: scan
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
+#   build:
+#     runs-on: ubuntu-latest
+#     needs: scan
+#     steps:
+#       - name: Checkout del código
+#         uses: actions/checkout@v4
 
-      - name: Login en GitHub Container Registry (GHCR)
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+#       - name: Login en GitHub Container Registry (GHCR)
+#         uses: docker/login-action@v3
+#         with:
+#           registry: ghcr.io
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GHCR_PAT }}
 
-      - name: Construir y publicar imagen Docker desde GestionReservasWebII
-        run: |
-          docker build -f GestionReservasWebII/Dockerfile . --tag ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
+#       - name: Construir y publicar imagen Docker desde GestionReservasWebII
+#         run: |
+#           docker build -f GestionReservasWebII/Dockerfile . --tag ${{ env.IMAGE_NAME }}:${{ github.sha }}
+#           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-  deploy_infra:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
+#   deploy_infra:
+#     runs-on: ubuntu-latest
+#     needs: build
+#     steps:
+#       - name: Checkout del código
+#         uses: actions/checkout@v4
 
-      - name: Login en Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+#       - name: Login en Azure
+#         uses: azure/login@v1
+#         with:
+#           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Crear terraform.tfvars
-        run: |
-          cd infra
-          echo "subscription_id=\"${{ secrets.SUBSCRIPTION_ID }}\"" > terraform.tfvars
-          echo "sqladmin_username=\"${{ secrets.SQL_USER }}\"" >> terraform.tfvars
-          echo "sqladmin_password=\"${{ secrets.SQL_PASS }}\"" >> terraform.tfvars
+#       - name: Crear terraform.tfvars
+#         run: |
+#           cd infra
+#           echo "subscription_id=\"${{ secrets.SUBSCRIPTION_ID }}\"" > terraform.tfvars
+#           echo "sqladmin_username=\"${{ secrets.SQL_USER }}\"" >> terraform.tfvars
+#           echo "sqladmin_password=\"${{ secrets.SQL_PASS }}\"" >> terraform.tfvars
 
-      - name: Configurar Terraform
-        uses: hashicorp/setup-terraform@v3
+#       - name: Configurar Terraform
+#         uses: hashicorp/setup-terraform@v3
 
-      - name: Inicializar Terraform
-        run: cd infra && terraform init 
+#       - name: Inicializar Terraform
+#         run: cd infra && terraform init 
 
-      - name: Validar configuración Terraform
-        run: cd infra && terraform validate -no-color
+#       - name: Validar configuración Terraform
+#         run: cd infra && terraform validate -no-color
 
-      - name: Plan de Infraestructura Terraform
-        id: plan
-        run: |
-          cd infra
-          terraform plan -var-file=terraform.tfvars -no-color -out main.tfplan -input=false
-        continue-on-error: true
+#       - name: Plan de Infraestructura Terraform
+#         id: plan
+#         run: |
+#           cd infra
+#           terraform plan -var-file=terraform.tfvars -no-color -out main.tfplan -input=false
+#         continue-on-error: true
 
-      - name: Verificar si hay cambios en la infraestructura
-        id: check_changes
-        run: |
-          cd infra
-          terraform show main.tfplan | tee terraform_plan_output.txt
-          if grep -q "No changes." terraform_plan_output.txt; then
-            echo "No hay cambios en la infraestructura. Marcando como éxito."
-            echo "apply_needed=false" >> $GITHUB_ENV
-          else
-            echo "Se detectaron cambios en la infraestructura."
-            echo "apply_needed=true" >> $GITHUB_ENV
-          fi
+#       - name: Verificar si hay cambios en la infraestructura
+#         id: check_changes
+#         run: |
+#           cd infra
+#           terraform show main.tfplan | tee terraform_plan_output.txt
+#           if grep -q "No changes." terraform_plan_output.txt; then
+#             echo "No hay cambios en la infraestructura. Marcando como éxito."
+#             echo "apply_needed=false" >> $GITHUB_ENV
+#           else
+#             echo "Se detectaron cambios en la infraestructura."
+#             echo "apply_needed=true" >> $GITHUB_ENV
+#           fi
 
-      - name: Aplicar cambios con Terraform (solo si hay cambios)
-        if: env.apply_needed == 'true'
-        run: |
-          cd infra
-          terraform apply -auto-approve main.tfplan
+#       - name: Aplicar cambios con Terraform (solo si hay cambios)
+#         if: env.apply_needed == 'true'
+#         run: |
+#           cd infra
+#           terraform apply -auto-approve main.tfplan
 
-      - name: Exportar estructura de Azure Resource Manager (ARM)
-        run: |
-          az group export -n proyecto-arg-326 > lab_01.json
+#       - name: Exportar estructura de Azure Resource Manager (ARM)
+#         run: |
+#           az group export -n proyecto-arg-326 > lab_01.json
 
-      - name: Instalar Graphviz y jq
-        run: |
-          sudo apt update && sudo apt install -y graphviz jq
+#       - name: Instalar Graphviz y jq
+#         run: |
+#           sudo apt update && sudo apt install -y graphviz jq
 
-      - name: Convertir JSON a DOT y generar imagen
-        run: |
-          cat lab_01.json | jq '.' > lab_01.dot
-          dot -Tpng lab_01.dot -o lab_01.png
+#       - name: Convertir JSON a DOT y generar imagen
+#         run: |
+#           cat lab_01.json | jq '.' > lab_01.dot
+#           dot -Tpng lab_01.dot -o lab_01.png
 
-      - name: Subir imagen generada como artefacto
-        uses: actions/upload-artifact@v4
-        with:
-          name: diagrama-arm
-          path: lab_01.png
+#       - name: Subir imagen generada como artefacto
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: diagrama-arm
+#           path: lab_01.png
 
-      - name: Agregar imagen al summary
-        run: |
-          echo "### Diagrama del Grupo de Recursos" >> $GITHUB_STEP_SUMMARY
-          echo "![](./lab_01.png)" >> $GITHUB_STEP_SUMMARY
+#       - name: Agregar imagen al summary
+#         run: |
+#           echo "### Diagrama del Grupo de Recursos" >> $GITHUB_STEP_SUMMARY
+#           echo "![](./lab_01.png)" >> $GITHUB_STEP_SUMMARY
 
-  deploy:
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    needs: deploy_infra
-    environment:
-      name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+#   deploy:
+#     permissions:
+#       contents: none
+#     runs-on: ubuntu-latest
+#     needs: deploy_infra
+#     environment:
+#       name: 'Development'
+#       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-    steps:
-      - name: Login en Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+#     steps:
+#       - name: Login en Azure
+#         uses: azure/login@v1
+#         with:
+#           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Desplegar a Azure Web App con Docker
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          images: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+#       - name: Desplegar a Azure Web App con Docker
+#         id: deploy-to-webapp
+#         uses: azure/webapps-deploy@v2
+#         with:
+#           app-name: ${{ env.AZURE_WEBAPP_NAME }}
+#           images: ${{ env.IMAGE_NAME }}:${{ github.sha }}

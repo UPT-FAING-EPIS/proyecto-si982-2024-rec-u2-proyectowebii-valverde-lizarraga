@@ -24,8 +24,11 @@ variable "sqladmin_password" {
 }
 
 provider "azurerm" {
-  features {}
-
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
   subscription_id = var.suscription_id
 }
 
@@ -48,22 +51,22 @@ resource "azurerm_service_plan" "appserviceplan" {
 }
 
 resource "azurerm_linux_web_app" "webapp" {
-  name                = "proyecto-awa-${random_integer.ri.result}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  service_plan_id     = azurerm_service_plan.appserviceplan.id
-
+  name                  = "proyecto-awa-${random_integer.ri.result}"
+  location              = azurerm_resource_group.rg.location
+  resource_group_name   = azurerm_resource_group.rg.name
+  service_plan_id       = azurerm_service_plan.appserviceplan.id
+  depends_on            = [azurerm_service_plan.appserviceplan]
+  
   site_config {
     minimum_tls_version = "1.2"
-    always_on           = false
+    always_on = false
     application_stack {
-      docker_image_name   = "patrickcuadros/shorten:latest"
-      docker_registry_url = "https://index.docker.io"
+      docker_image_name = "patrickcuadros/shorten:latest"
+      docker_registry_url = "https://index.docker.io"      
     }
   }
 }
 
-# 🆕 Se agrega el servidor SQL (antes estaba faltando)
 resource "azurerm_mssql_server" "sqlsrv" {
   name                         = "proyecto-dbs-${random_integer.ri.result}"
   resource_group_name          = azurerm_resource_group.rg.name
@@ -73,15 +76,6 @@ resource "azurerm_mssql_server" "sqlsrv" {
   administrator_login_password = var.sqladmin_password
 }
 
-# ✅ Base de datos principal (manteniendo `proyecto-dbs-161`)
-resource "azurerm_mssql_database" "sqldb" {
-  name                = "proyecto-dbs-161"  
-  server_id          = azurerm_mssql_server.sqlsrv.id
-  collation          = "SQL_Latin1_General_CP1_CI_AS"
-  max_size_gb        = 2
-  sku_name           = "Basic"
-}
-
 resource "azurerm_mssql_firewall_rule" "sqlaccessrule" {
   name             = "PublicAccess"
   server_id        = azurerm_mssql_server.sqlsrv.id
@@ -89,8 +83,7 @@ resource "azurerm_mssql_firewall_rule" "sqlaccessrule" {
   end_ip_address   = "255.255.255.255"
 }
 
-# 🆕 Segunda base de datos (se eliminó duplicación)
-resource "azurerm_mssql_database" "sqldb_additional" {
+resource "azurerm_mssql_database" "sqldb" {
   name      = "shorten"
   server_id = azurerm_mssql_server.sqlsrv.id
   sku_name  = "Free"
