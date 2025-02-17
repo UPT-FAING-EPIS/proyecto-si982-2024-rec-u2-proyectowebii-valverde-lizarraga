@@ -1,7 +1,7 @@
 name: Construcción y Despliegue en Azure
 
 env:
-  AZURE_WEBAPP_NAME: app-proyecto-valverde-lizarraga # Nombre de la aplicación
+  AZURE_WEBAPP_NAME: app-proyecto-valverde-lizarraga  # Nombre de la aplicación
   DOTNET_VERSION: '8'  # Versión de .NET
   IMAGE_NAME: ghcr.io/jeanvalverde24/shorten
 
@@ -9,9 +9,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'GestionReservasWebII/**'  # Se detectan cambios en la carpeta del código fuente
-      - 'infra/**'  # Se detectan cambios en la infraestructura Terraform
-      - '.github/workflows/**'
+      - 'GestionReservasWebII/**'  # Solo se ejecuta si hay cambios en la carpeta del código
   workflow_dispatch:
 
 permissions:
@@ -26,11 +24,11 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Escaneo de Terraform con Trivy
+      - name: Escaneo de Seguridad con Trivy
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
-          scan-ref: './infra'
+          scan-ref: './GestionReservasWebII'
           severity: 'HIGH,CRITICAL'
 
   build:
@@ -49,47 +47,14 @@ jobs:
 
       - name: Construir y publicar imagen Docker desde GestionReservasWebII
         run: |
-          docker build -f GestionReservasWebII/Dockerfile . --tag ghcr.io/jeanvalverde24/shorten:${{ github.sha }}
+          docker build -f GestionReservasWebII/Dockerfile . --tag ${{ env.IMAGE_NAME }}:${{ github.sha }}
           docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
-  deploy_infra:
-    runs-on: ubuntu-latest
-    needs: build  # Se asegura que la imagen Docker se haya publicado antes
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
 
-      - name: Login en Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Crear terraform.tfvars
-        run: |
-          cd infra
-          echo "suscription_id=\"${{ secrets.SUBSCRIPTION_ID }}\"" > terraform.tfvars
-          echo "sqladmin_username=\"${{ secrets.SQL_USER }}\"" >> terraform.tfvars
-          echo "sqladmin_password=\"${{ secrets.SQL_PASS }}\"" >> terraform.tfvars
-      - name: Configurar Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Inicializar Terraform
-        run: cd infra && terraform init 
-
-      - name: Validar configuración Terraform
-        run: cd infra && terraform validate -no-color
-
-      - name: Plan de Infraestructura Terraform
-        run: cd infra && terraform plan -var-file=terraform.tfvars -no-color -out main.tfplan -input=false
-
-      - name: Aplicar Infraestructura Terraform
-        run: |
-          cd infra
-          terraform apply -auto-approve main.tfplan
   deploy:
     permissions:
       contents: none
     runs-on: ubuntu-latest
-    needs: deploy_infra  # Se asegura que la infraestructura esté lista antes de desplegar
+    needs: build  # Solo se ejecuta si el build fue exitoso
     environment:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -100,9 +65,32 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Verificar si el App Service existe antes de desplegar
+        run: |
+          az webapp show --resource-group arg-proyecto-valverde-lizarraga --name app-proyecto-valverde-lizarraga || exit 1
+
       - name: Desplegar a Azure Web App con Docker
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           images: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Generar Diagrama de Despliegue (JSON)
+        run: |
+          az group export -n arg-proyecto-valverde-lizarraga > diagrama_de_despliegue.json
+
+      - name: Subir diagrama de despliegue como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagrama_de_despliegue
+          path: diagrama_de_despliegue.json
+
+      - name: Publicar Diagrama en Summary
+        run: |
+          echo "## Diagrama de Despliegue" >> $GITHUB_STEP_SUMMARY
+          echo '<details><summary>Ver Diagrama JSON</summary>' >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          cat diagrama_de_despliegue.json >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
