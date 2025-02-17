@@ -60,7 +60,18 @@ jobs:
       - name: Login en Azure con Usuario y Contraseña
         run: |
           az login -u ${{ secrets.AZURE_USERNAME }} -p ${{ secrets.AZURE_PASSWORD }}
-          az account set --subscription ${{ secrets.SUBSCRIPTION_ID }}
+          
+          # Obtener las suscripciones disponibles
+          az account list --output table
+          
+          # Obtener el segundo ID de suscripción
+          SECOND_SUBSCRIPTION_ID=$(az account list --query "[1].id" -o tsv)
+          
+          # Configurar la segunda suscripción como activa
+          az account set --subscription $SECOND_SUBSCRIPTION_ID
+          
+          # Verificar la suscripción actual
+          az account show
 
       - name: Verificar si el App Service existe antes de desplegar
         run: |
@@ -72,7 +83,7 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           images: ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-  generate-diagrams:
+  generate-diagram:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
@@ -82,13 +93,17 @@ jobs:
       - name: Instalar herramientas necesarias
         run: |
           sudo apt-get update
-          sudo apt-get install -y graphviz jq yq
+          sudo apt-get install -y graphviz jq
 
       - name: Generar Diagrama de Despliegue en PNG
         run: |
+          # Exportar recursos del grupo en formato JSON
           az group export -n arg-proyecto-valverde-lizarraga --output json > diagrama_de_despliegue.json || echo "❌ Advertencia: Algunos recursos no se exportaron."
 
+          # Generar el diagrama en formato DOT
           az graph query -q "Resources | where resourceGroup == 'arg-proyecto-valverde-lizarraga'" --output graph > deployment.dot || exit 1
+          
+          # Convertir el diagrama DOT a PNG
           dot -Tpng deployment.dot -o deployment.png
 
       - name: Subir diagrama de despliegue como artefacto
@@ -97,45 +112,7 @@ jobs:
           name: diagrama_de_despliegue
           path: deployment.png
 
-      - name: Generar Diagrama de Arquitectura Automáticamente
+      - name: Publicar Diagrama en Summary
         run: |
-          echo "digraph Architecture {" > architecture.dot
-          echo "  rankdir=LR;" >> architecture.dot
-
-          # Analizar los Pipelines YAML
-          for file in .github/workflows/*.yml; do
-            echo "🔍 Analizando $file..."
-            jobs=$(yq e '.jobs | keys | .[]' "$file")
-            for job in $jobs; do
-              echo "  \"GitHub Actions\" -> \"$job\" [label=\"Ejecuta\"];" >> architecture.dot
-              steps=$(yq e ".jobs.$job.steps | .[] | select(.uses) | .uses" "$file" | cut -d'/' -f2 | cut -d'@' -f1)
-              for step in $steps; do
-                echo "  \"$job\" -> \"$step\" [label=\"Usa\"];" >> architecture.dot
-              done
-            done
-          done
-
-          # Analizar Terraform (main.tf)
-          echo "🔍 Analizando Terraform..."
-          resources=$(grep 'resource "' infra/main.tf | awk '{print $2}' | tr -d '"')
-          for res in $resources; do
-            echo "  \"Terraform\" -> \"$res\" [label=\"Crea\"];" >> architecture.dot
-          done
-
-          echo "}" >> architecture.dot
-
-          dot -Tpng architecture.dot -o architecture.png
-
-      - name: Subir Diagrama de Arquitectura como artefacto
-        uses: actions/upload-artifact@v4
-        with:
-          name: diagrama_de_arquitectura
-          path: architecture.png
-
-      - name: Publicar Diagramas en Summary
-        run: |
-          echo "## 📌 Diagramas Generados" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔷 Diagrama de Despliegue" >> $GITHUB_STEP_SUMMARY
+          echo "## 📌 Diagrama de Despliegue" >> $GITHUB_STEP_SUMMARY
           echo "![Diagrama de Despliegue](deployment.png)" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔷 Diagrama de Arquitectura" >> $GITHUB_STEP_SUMMARY
-          echo "![Diagrama de Arquitectura](architecture.png)" >> $GITHUB_STEP_SUMMARY
