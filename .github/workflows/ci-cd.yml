@@ -84,15 +84,17 @@ jobs:
         run: |
           az group export -n arg-proyecto-valverde-lizarraga --output json > diagrama_de_despliegue.json || echo "❌ Advertencia: Algunos recursos no se exportaron."
 
-      - name: Instalar Graphviz
+      - name: Instalar jq y Graphviz
         run: |
           sudo apt update
-          sudo apt install graphviz -y
+          sudo apt install jq graphviz -y
 
-      - name: Generar Diagrama de Despliegue (DOT)
+      - name: Convertir JSON a formato DOT
         run: |
-          az graph query -q "Resources | where resourceGroup == 'arg-proyecto-valverde-lizarraga'" --output table > deployment.dot
-          cat deployment.dot  # Mostrar contenido para debug
+          echo "digraph G {" > deployment.dot
+          cat diagrama_de_despliegue.json | jq -r '.resources[] | "    \"" + .type + "\" -> \"" + .name + "\";"' >> deployment.dot
+          echo "}" >> deployment.dot
+          cat deployment.dot  # Mostrar el archivo DOT generado
 
       - name: Convertir DOT a PNG
         run: |
