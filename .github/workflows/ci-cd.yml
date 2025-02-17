@@ -59,10 +59,13 @@ jobs:
 
       - name: Login en Azure con Usuario y Contraseña
         run: |
-          az login -u ${{ secrets.AZURE_USERNAME }} -p ${{ secrets.AZURE_PASSWORD }}
+          az login -u ${{ secrets.AZURE_USERNAME }} -p ${{ secrets.AZURE_PASSWORD }} --output none
           
-          # Usar la segunda suscripción automáticamente
-          SECOND_SUBSCRIPTION_ID=$(az account list --query "[1].id" -o tsv || echo "")
+          # Obtener la lista de suscripciones
+          SUBSCRIPTION_LIST=$(az account list --query "[].id" -o tsv)
+          
+          # Obtener la segunda suscripción
+          SECOND_SUBSCRIPTION_ID=$(echo "$SUBSCRIPTION_LIST" | sed -n 2p)
           
           # Si no se encuentra la segunda suscripción, usar el secreto definido
           if [ -z "$SECOND_SUBSCRIPTION_ID" ]; then
@@ -71,6 +74,7 @@ jobs:
           
           # Establecer la suscripción activa
           az account set --subscription $SECOND_SUBSCRIPTION_ID
+          echo "✅ Usando la suscripción: $SECOND_SUBSCRIPTION_ID"
 
       - name: Verificar si el App Service existe antes de desplegar
         run: |
