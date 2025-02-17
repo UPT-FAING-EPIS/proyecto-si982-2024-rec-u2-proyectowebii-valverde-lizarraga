@@ -23,4 +23,8 @@
 
 ## Diagrama de Despliegue
 
+![image](https://github.com/user-attachments/assets/3ad874ea-8d94-40a4-a423-ff3b2e96ba51)
+
 ## Diagrama de Infraestructura
+
+![image](https://github.com/user-attachments/assets/1b22aee7-20a3-4a49-866b-a9abed8b0e05)
