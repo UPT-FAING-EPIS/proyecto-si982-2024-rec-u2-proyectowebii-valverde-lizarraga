@@ -91,6 +91,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y graphviz jq yq
 
+      - name: Login en Azure (con usuario y contraseña)
+        run: |
+          az login -u ${{ secrets.AZURE_USERNAME }} -p ${{ secrets.AZURE_PASSWORD }}
+
       # 🔹 Generar Diagrama de Despliegue (PNG)
       - name: Generar Diagrama de Despliegue en PNG
         run: |
