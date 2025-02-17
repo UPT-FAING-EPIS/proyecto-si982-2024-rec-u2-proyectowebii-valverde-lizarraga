@@ -32,10 +32,6 @@ provider "azurerm" {
   subscription_id = var.suscription_id
 }
 
-resource "random_integer" "ri" {
-  min = 100
-  max = 999
-}
 
 resource "azurerm_resource_group" "rg" {
   name     = "arg-proyecto-valverde-lizarraga"
