@@ -88,6 +88,30 @@ jobs:
           cd infra
           terraform apply -auto-approve main.tfplan
 
+      - name: Exportar estructura de Azure Resource Manager (ARM)
+        run: |
+          az group export -n proyecto-arg-326 > lab_01.json
+
+      - name: Instalar Graphviz y yq
+        run: |
+          sudo apt update && sudo apt install -y graphviz jq
+
+      - name: Convertir JSON a DOT y generar imagen
+        run: |
+          cat lab_01.json | jq '.' > lab_01.dot
+          dot -Tpng lab_01.dot -o lab_01.png
+
+      - name: Subir imagen generada como artefacto
+        uses: actions/upload-artifact@v3
+        with:
+          name: diagrama-arm
+          path: lab_01.png
+
+      - name: Agregar imagen al summary
+        run: |
+          echo "### Diagrama del Grupo de Recursos" >> $GITHUB_STEP_SUMMARY
+          echo "![](./lab_01.png)" >> $GITHUB_STEP_SUMMARY
+
   deploy:
     permissions:
       contents: none
