@@ -38,12 +38,12 @@ resource "random_integer" "ri" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "proyecto-arg-${random_integer.ri.result}"
+  name     = "arg-proyecto-valverde-lizarraga"
   location = "brazilsouth"
 }
 
 resource "azurerm_service_plan" "appserviceplan" {
-  name                = "proyecto-asp-${random_integer.ri.result}"
+  name                = "asp-proyecto-valverde-lizarraga"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
@@ -51,7 +51,7 @@ resource "azurerm_service_plan" "appserviceplan" {
 }
 
 resource "azurerm_linux_web_app" "webapp" {
-  name                  = "proyecto-awa-${random_integer.ri.result}"
+  name                  = "app-proyecto-valverde-lizarraga"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   service_plan_id       = azurerm_service_plan.appserviceplan.id
@@ -68,7 +68,7 @@ resource "azurerm_linux_web_app" "webapp" {
 }
 
 resource "azurerm_mssql_server" "sqlsrv" {
-  name                         = "proyecto-dbs-${random_integer.ri.result}"
+  name                         = "bd-proyecto-valverde-lizarraga"
   resource_group_name          = azurerm_resource_group.rg.name
   location                     = azurerm_resource_group.rg.location
   version                      = "12.0"
@@ -90,10 +90,10 @@ resource "azurerm_mssql_database" "sqldb" {
 }
 
 resource "azurerm_dns_zone" "dns" {
-  name                = "proyecto-dns-${random_integer.ri.result}.com"
+  name                = "dns-proyecto-valverde-lizarraga.com"
   resource_group_name = azurerm_resource_group.rg.name
 }
-# dsadsasdasdadsad
+
 resource "azurerm_dns_cname_record" "cname" {
   name                = "www"
   zone_name           = azurerm_dns_zone.dns.name
