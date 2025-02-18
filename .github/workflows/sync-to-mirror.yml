@@ -59,4 +59,5 @@ jobs:
           git push --force origin main
 
       - name: Agregar enlace del repositorio espejo al summary
-        run: echo "El enlace del repositorio espejo es: https://github.com/JeanValverde24/Proyecto_Rec_Espejo" >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "El enlace del repositorio espejo es: https://github.com/JeanValverde24/Proyecto_Rec_Espejo" >> $GITHUB_STEP_SUMMARY
