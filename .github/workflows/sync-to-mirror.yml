@@ -59,19 +59,4 @@ jobs:
           git push --force origin main
 
       - name: Agregar enlace del repositorio espejo al summary
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const mirrorRepoUrl = 'https://github.com/JeanValverde24/Proyecto_Rec_Espejo';
-            const summaryMessage = `El enlace del repositorio espejo es: [${mirrorRepoUrl}](${mirrorRepoUrl})`;
-            const { context } = require('@actions/github');
-            const { owner, repo } = context.repo;
-            
-            // Agregar al summary
-            const octokit = require('@actions/github').getOctokit(process.env.GITHUB_TOKEN);
-            await octokit.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: context.runId,
-              body: summaryMessage
-            });
+        run: echo "El enlace del repositorio espejo es: https://github.com/JeanValverde24/Proyecto_Rec_Espejo" >> $GITHUB_STEP_SUMMARY
