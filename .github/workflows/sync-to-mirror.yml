@@ -19,7 +19,7 @@ jobs:
         run: |
           git config --global user.email "jv2020066920@virtual.upt.pe"
           git config --global user.name "JeanValverde24"
-
+          
       - name: Filtrar solo los cambios en 'GestionReservasWebII', 'GestionReservasWebII.Tests' y '.sln'
         run: |
           git diff --name-only HEAD~1 HEAD > changed_files.txt
@@ -57,3 +57,21 @@ jobs:
           fi
           git commit -m "Sync: Actualización de GestionReservasWebII, GestionReservasWebII.Tests y solución"
           git push --force origin main
+
+      - name: Agregar enlace del repositorio espejo al summary
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const mirrorRepoUrl = 'https://github.com/JeanValverde24/Proyecto_Rec_Espejo';
+            const summaryMessage = `El enlace del repositorio espejo es: [${mirrorRepoUrl}](${mirrorRepoUrl})`;
+            const { context } = require('@actions/github');
+            const { owner, repo } = context.repo;
+            
+            // Agregar al summary
+            const octokit = require('@actions/github').getOctokit(process.env.GITHUB_TOKEN);
+            await octokit.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: context.runId,
+              body: summaryMessage
+            });
