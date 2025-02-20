@@ -1,0 +1,70 @@
+@model IEnumerable<GestionReservasWebII.Models.RecursoViewModel>
+
+@{
+    ViewData["Title"] = "Gestionar Recursos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center">Gestión de Recursos</h2>
+    <p class="text-center">Debe mostrar el nombre del administrador registrado: <strong>@ViewBag.AdminNombre</strong></p>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-between mb-3">
+        <a href="@Url.Action("AgregarRecurso", "Recursos")" class="btn btn-primary">Añadir Recurso</a>
+        <button class="btn btn-info">Historial de Cambios</button>
+    </div>
+
+    <!-- Barra de Búsqueda -->
+    <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar recurso por nombre...">
+    </div>
+
+    <!-- Tabla de Recursos -->
+    <table class="table table-bordered">
+        <thead class="bg-dark text-white">
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+                <th>Registrado Por</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="recursosTable">
+            @foreach (var recurso in Model)
+            {
+                <tr>
+                    <td>@recurso.Id</td>
+                    <td>@recurso.Tipo</td>
+                    <td>@recurso.Nombre</td>
+                    <td>@recurso.Cantidad</td>
+                    <td>@recurso.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                    <td>@recurso.RegistradoPor</td>
+                    <td class="@(recurso.Estado == "Activo" ? "text-success" : "text-danger")">
+                        @recurso.Estado
+                    </td>
+                    <td>
+                        <a href="@Url.Action("EditarRecurso", "Recursos", new { id = recurso.Id })" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="@Url.Action("EliminarRecurso", "Recursos", new { id = recurso.Id })" class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#recursosTable tr');
+
+        rows.forEach(row => {
+            let name = row.cells[2].textContent.toLowerCase();
+            row.style.display = name.includes(filter) ? '' : 'none';
+        });
+    });
+</script>

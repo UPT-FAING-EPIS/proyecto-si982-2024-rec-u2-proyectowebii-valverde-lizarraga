@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Registrar Estudiante";
+}
+<h2>Registrar Estudiante</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage)) {
+    <p style="color: red;">@ViewBag.ErrorMessage</p>
+}
+
+<form asp-action="RegistrarEstudiante" method="post">
+    <label>Nombres:</label>
+    <input type="text" name="nombre" required />
+    
+    <label>Apellidos:</label>
+    <input type="text" name="apellido" required />
+    
+    <label>Código Universitario:</label>
+    <input type="text" name="codigoUniversitario" required pattern="[0-9]{10}" title="Debe contener 10 dígitos" />
+    
+    <label>Número:</label>
+    <input type="text" name="telefono" required pattern="[0-9]{9}" title="Debe contener 9 dígitos" />
+    
+    <label>Contraseña:</label>
+    <input type="password" name="password" required pattern="[a-zA-Z0-9]+" title="Solo letras y números" />
+    
+    <button type="submit">Registrarse</button>
+</form>
+
+<hr>

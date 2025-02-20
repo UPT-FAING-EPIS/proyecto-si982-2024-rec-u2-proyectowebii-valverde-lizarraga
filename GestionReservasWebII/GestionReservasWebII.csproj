@@ -15,6 +15,16 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.7" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+        <!-- Dependencias para la documentación -->
+    <PackageReference Include="Docfx.App" Version="2.77.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+
+    <!-- Corrección de conflictos con Microsoft.CodeAnalysis -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting.Common" Version="4.10.0" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,64 @@
+@{
+    ViewData["Title"] = "Dashboard Administrador";
+    Layout = null;
+}
+
+<div class="container-fluid p-4">
+    <h2>Bienvenido, @ViewBag.Nombre!</h2>
+    <div class="mb-4">
+        <h5>Actividades Recientes:</h5>
+        <ul>
+            @if (ViewBag.ActividadesRecientes != null)
+            {
+                foreach (var actividad in ViewBag.ActividadesRecientes)
+                {
+                    <li>@actividad.FechaModificacion</li>
+                }
+            }
+            else
+            {
+                <li>No hay actividades recientes.</li>
+            }
+        </ul>
+    </div>
+
+    <div class="row g-4">
+        <!-- Cards -->
+        <div class="col-md-3">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-building display-4 mb-3 text-primary"></i>
+                    <h5>Aulas Activas</h5>
+                    <p>@ViewBag.TotalAulas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-pc-display-horizontal display-4 mb-3 text-success"></i>
+                    <h5>Laboratorios Activos</h5>
+                    <p>@ViewBag.TotalLaboratorios</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-circle display-4 mb-3 text-danger"></i>
+                    <h5>Incidencias Por Resolver</h5>
+                    <p>@ViewBag.TotalIncidencias</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar2-check-fill display-4 mb-3 text-warning"></i>
+                    <h5>Reservas Activas</h5>
+                    <p>@ViewBag.TotalReservas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

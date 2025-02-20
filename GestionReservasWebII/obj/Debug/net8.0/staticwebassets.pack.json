@@ -2,7 +2,7 @@
   "Files": [
     {
       "Id": "C:\\Users\\Jean_\\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\\GestionReservasWebII\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\GestionReservasWebII.bundle.scp.css",
-      "PackagePath": "staticwebassets\\GestionReservasWebII.bundle.scp.css"
+      "PackagePath": "staticwebassets\\GestionReservasWebII.2vhr2ej0vf.bundle.scp.css"
     },
     {
       "Id": "C:\\Users\\Jean_\\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\\GestionReservasWebII\\wwwroot\\css\\site.css",
@@ -251,6 +251,10 @@
     {
       "Id": "C:\\Users\\Jean_\\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\\GestionReservasWebII\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.GestionReservasWebII.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.GestionReservasWebII.Microsoft.AspNetCore.StaticWebAssets.props",

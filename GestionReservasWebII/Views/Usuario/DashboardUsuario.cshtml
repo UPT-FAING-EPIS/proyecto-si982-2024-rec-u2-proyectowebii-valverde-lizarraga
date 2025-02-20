@@ -4,7 +4,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,7 @@
             display: flex;
         }
 
-        /* Estilo del menú lateral */
+        /* Menú lateral */
         .sidebar {
             width: 250px;
             background-color: #003366;
@@ -58,7 +58,7 @@
                     background-color: #ff3333;
                 }
 
-        /* Estilo del contenido principal */
+        /* Contenido principal */
         .main-content {
             flex: 1;
             padding: 20px;
@@ -122,21 +122,28 @@
         <a href="#" class="menu-item"><i class="fas fa-history icon"></i> Historial de reservas</a>
         <a href="#" class="menu-item"><i class="fas fa-exclamation-triangle icon"></i> Incidencias</a>
         <a href="#" class="menu-item"><i class="fas fa-cog icon"></i> Configuración</a>
-        <a href="#" class="menu-item logout"><i class="fas fa-sign-out-alt icon"></i> Cerrar sesión</a>
+        <a href="/Auth/Logout" class="menu-item logout"><i class="fas fa-sign-out-alt icon"></i> Cerrar sesión</a>
     </div>
 
     <!-- Contenido principal -->
     <div class="main-content">
-        <div class="welcome">Bienvenido, "Nombre del Estudiante"!!</div>
+        <div class="welcome">Bienvenido, @ViewBag.Nombre!!</div>
 
         <!-- Actividades recientes -->
         <div class="recent-activities">
             <h3>Actividades Recientes:</h3>
             <ul>
-                <li>Fecha completa y Hora de la sesión reciente</li>
-                <li>Fecha completa y Hora de la penúltima sesión</li>
-                <li>Fecha completa y Hora de la antepenúltima sesión</li>
-                <li>Fecha completa y Hora de la trasantepenúltima sesión</li>
+                @if (ViewBag.ActividadesRecientes != null)
+                {
+                    foreach (var actividad in ViewBag.ActividadesRecientes)
+                    {
+                        <li>@actividad.FechaModificacion</li>
+                    }
+                }
+                else
+                {
+                    <li>No hay actividades recientes.</li>
+                }
             </ul>
         </div>
 
@@ -144,19 +151,19 @@
         <div class="cards-container">
             <div class="card">
                 <i class="fas fa-table icon"></i>
-                <div class="text">Cantidad total de carpetas reservadas</div>
+                <div class="text">Cantidad total de carpetas reservadas: 10</div>
             </div>
             <div class="card">
                 <i class="fas fa-desktop icon"></i>
-                <div class="text">Cantidad total de computadoras reservadas</div>
+                <div class="text">Cantidad total de computadoras reservadas: 8</div>
             </div>
             <div class="card">
                 <i class="fas fa-exclamation-circle icon"></i>
-                <div class="text">Cantidad total de incidencias reportadas</div>
+                <div class="text">Cantidad total de incidencias reportadas: 3</div>
             </div>
             <div class="card">
                 <i class="fas fa-calendar-times icon"></i>
-                <div class="text">Cantidad total de reservas canceladas</div>
+                <div class="text">Cantidad total de reservas canceladas: 2</div>
             </div>
         </div>
     </div>

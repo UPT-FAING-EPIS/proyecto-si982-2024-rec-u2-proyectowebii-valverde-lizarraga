@@ -1,10 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Inicio de Sesión";
-    Layout = null; // Esto elimina el layout por defecto que podría incluir navbar y footer
+    Layout = null;
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +25,7 @@
         .login-container {
             display: flex;
             width: 800px;
-            height: 500px;
+            height: 520px;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -43,17 +43,6 @@
             color: #ffffff;
         }
 
-            .left-section img {
-                width: 150px;
-                height: auto;
-                margin-bottom: 20px;
-            }
-
-            .left-section h1 {
-                font-size: 1.5rem;
-                text-align: center;
-            }
-
         .right-section {
             flex: 1;
             padding: 40px;
@@ -61,20 +50,14 @@
             flex-direction: column;
             justify-content: center;
             background-color: #f9fafc;
-            transition: all 0.3s ease-in-out;
         }
 
-            .right-section h2 {
-                font-size: 1.5rem;
-                margin-bottom: 20px;
-                color: #003366;
-                text-align: center;
-            }
-
-            .right-section form {
-                display: flex;
-                flex-direction: column;
-            }
+        .right-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #003366;
+            text-align: center;
+        }
 
         .checkbox-group {
             margin-bottom: 20px;
@@ -82,44 +65,17 @@
             justify-content: space-between;
         }
 
-            .checkbox-group label {
-                font-size: 0.9rem;
-                color: #333333;
-                cursor: pointer;
-            }
-
-            .checkbox-group input {
-                margin-right: 8px;
-            }
-
         .form-group {
             margin-bottom: 15px;
         }
 
-            .form-group input {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #cccccc;
-                border-radius: 5px;
-                font-size: 1rem;
-            }
-
-        .form-links {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            font-size: 1rem;
         }
-
-            .form-links a {
-                text-decoration: none;
-                font-size: 0.9rem;
-                color: #0066cc;
-            }
-
-                .form-links a:hover {
-                    text-decoration: underline;
-                }
 
         .btn-submit {
             background: #003366;
@@ -132,106 +88,94 @@
             transition: background 0.3s ease;
         }
 
-            .btn-submit:hover {
-                background: #004b99;
-            }
+        .btn-submit:hover {
+            background: #004b99;
+        }
 
-        @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+        .register-links {
+            text-align: center;
+            margin-top: 15px;
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .register-links a {
+            text-decoration: none;
+            font-size: 0.9rem;
+            color: #0066cc;
+            margin: 0 10px;
+        }
+
+        .register-links a:hover {
+            text-decoration: underline;
         }
     </style>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const checkboxes = document.querySelectorAll('.checkbox-group input');
-            const title = document.querySelector('.right-section h2');
-            const form = document.querySelector('form');
+        function updateInputField() {
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const usernameInput = document.getElementById("username");
 
-            // Animación para todos los elementos del formulario
-            form.addEventListener('animationend', () => {
-                form.style.animation = ''; // Resetea la animación
-            });
-
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    checkboxes.forEach(box => {
-                        if (box !== checkbox) {
-                            box.checked = false;
-                        }
-                    });
-
-                    // Agrega la animación a todo el formulario
-                    form.style.animation = 'fadeIn 0.5s ease-in-out';
-                    updateForm(checkbox.value);
-                });
-            });
-
-            function updateForm(role) {
-                const formGroups = document.querySelectorAll('.form-group');
-
-                if (role === 'student') {
-                    title.textContent = 'Bienvenido Estudiante!!';
-                    formGroups[0].querySelector('input').placeholder = 'Código universitario';
-                    formGroups[0].querySelector('input').type = 'text';
-                } else if (role === 'teacher') {
-                    title.textContent = 'Bienvenido Docente!!';
-                    formGroups[0].querySelector('input').placeholder = 'Correo electrónico (virtual.upt.pe)';
-                    formGroups[0].querySelector('input').type = 'email';
-                } else if (role === 'admin') {
-                    title.textContent = 'Bienvenido Administrador';
-                    formGroups[0].querySelector('input').placeholder = 'Correo personal';
-                    formGroups[0].querySelector('input').type = 'email';
-                }
+            if (role === "student") {
+                usernameInput.placeholder = "Código Universitario";
+                usernameInput.type = "text";
+                usernameInput.pattern = "[0-9]{10}"; // 10 dígitos numéricos
+                usernameInput.title = "Debe ingresar un código universitario de 10 dígitos numéricos";
+            } 
+            else if (role === "teacher") {
+                usernameInput.placeholder = "Correo (virtual.upt.pe)";
+                usernameInput.type = "email";
+                usernameInput.pattern = "^[a-zA-Z0-9._%+-]+@@virtual\\.upt\\.pe$"; // Dominio restringido
+                usernameInput.title = "Debe ingresar un correo con el dominio @@virtual.upt.pe";
+            } 
+            else if (role === "admin") {
+                usernameInput.placeholder = "Correo personal";
+                usernameInput.type = "email";
+                usernameInput.pattern = "^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"; // Cualquier dominio válido
+                usernameInput.title = "Debe ingresar un correo válido";
             }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('input[name="role"]').forEach(radio => {
+                radio.addEventListener("change", updateInputField);
+            });
+
+            updateInputField(); // Para aplicar la configuración inicial
         });
     </script>
-
 </head>
 <body>
-    <img src="~/images/fondo.png" alt="Logo de la Universidad">
     <div class="login-container">
-
-        <!-- Left Section -->
         <div class="left-section">
             <img src="~/images/university-logo.png" alt="Logo de la Universidad">
             <h1>Logo de la Universidad</h1>
         </div>
-
-        <!-- Right Section -->
         <div class="right-section">
-            <h2>Bienvenido Estudiante!!</h2>
-            <form asp-action="Index" method="post">
-                <!-- Checkbox Group -->
+            <h2>Inicio de Sesión</h2>
+            <form asp-action="Login" asp-controller="Auth" method="post">
                 <div class="checkbox-group">
-                    <label><input type="checkbox" name="role" value="student" checked> Estudiante</label>
-                    <label><input type="checkbox" name="role" value="teacher"> Docente</label>
-                    <label><input type="checkbox" name="role" value="admin"> Administrador</label>
-                </div>
-
-                <!-- Input Fields -->
-                <div class="form-group">
-                    <input type="text" placeholder="Código universitario" required>
+                    <label><input type="radio" name="role" value="student" checked> Estudiante</label>
+                    <label><input type="radio" name="role" value="teacher"> Docente</label>
+                    <label><input type="radio" name="role" value="admin"> Administrador</label>
                 </div>
                 <div class="form-group">
-                    <input type="password" placeholder="Contraseña" required>
+                    <input id="username" type="text" name="username" placeholder="Código Universitario" required>
                 </div>
-
-                <!-- Links -->
-                <div class="form-links">
-                    <a href="#">+ Regístrate</a>
-                    <a href="#">¿Olvidaste tu contraseña?</a>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Contraseña" required>
                 </div>
-
-                <!-- Submit Button -->
+                @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage)) {
+                    <p style="color: red; text-align: center;">@ViewBag.ErrorMessage</p>
+                }
                 <button type="submit" class="btn-submit">Ingresar</button>
             </form>
+
+            <!-- Enlaces para registrar un nuevo usuario -->
+            <div class="register-links">
+                <p>¿Aún no tienes cuenta?</p>
+                <a asp-action="RegistrarEstudiante" asp-controller="Usuario">Regístrate como Estudiante</a> |
+                <a asp-action="RegistrarDocente" asp-controller="Usuario">Regístrate como Docente</a> |
+                <a asp-action="RegistrarAdministrador" asp-controller="Usuario">Regístrate como Administrador</a>
+            </div>
         </div>
     </div>
 </body>

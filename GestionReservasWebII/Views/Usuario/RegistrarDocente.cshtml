@@ -1,0 +1,30 @@
+<!-- RegistrarDocente.cshtml -->
+@{
+    ViewData["Title"] = "Registrar Docente";
+}
+<h2>Registrar Docente</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage)) {
+    <p style="color: red;">@ViewBag.ErrorMessage</p>
+}
+
+<form asp-action="RegistrarDocente" method="post">
+    <label>Nombres:</label>
+    <input type="text" name="nombre" required />
+    
+    <label>Apellidos:</label>
+    <input type="text" name="apellido" required />
+    
+    <label>Correo Institucional:</label>
+    <input type="email" name="correo" required pattern=".*@@virtual\.upt\.pe$" title="Debe ser @@virtual.upt.pe" />
+    
+    <label>Número:</label>
+    <input type="text" name="telefono" required pattern="[0-9]{9}" title="Debe contener 9 dígitos" />
+    
+    <label>Contraseña:</label>
+    <input type="password" name="password" required pattern="[a-zA-Z0-9]+" title="Solo letras y números" />
+    
+    <button type="submit">Registrarse</button>
+</form>
+
+<hr>

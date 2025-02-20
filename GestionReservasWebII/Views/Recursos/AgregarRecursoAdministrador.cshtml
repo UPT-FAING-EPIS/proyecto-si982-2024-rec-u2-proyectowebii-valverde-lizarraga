@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Agregar Recurso";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center">Agregar Nuevo Recurso</h2>
+    <p class="text-center">Hola <strong>@ViewBag.AdminNombre</strong>, registre el nuevo recurso.</p>
+
+    <form asp-action="AgregarRecurso" method="post">
+        <div class="mb-3">
+            <label for="Nombre" class="form-label">Nombre del Recurso</label>
+            <input type="text" class="form-control" name="Nombre" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Seleccione el Tipo:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="Tipo" value="Aula" required>
+                <label class="form-check-label">Aula</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="Tipo" value="Laboratorio">
+                <label class="form-check-label">Laboratorio</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="Estado" class="form-label">Estado</label>
+            <select class="form-select" name="Estado" required>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="Cantidad" class="form-label">Cantidad de Bienes</label>
+            <input type="number" class="form-control" name="Cantidad" min="1" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="FechaRegistro" class="form-label">Fecha de Registro</label>
+            <input type="date" class="form-control" name="FechaRegistro" value="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+</div>
