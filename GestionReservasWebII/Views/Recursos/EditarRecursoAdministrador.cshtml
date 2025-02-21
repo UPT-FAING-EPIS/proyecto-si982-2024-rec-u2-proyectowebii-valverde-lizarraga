@@ -10,21 +10,21 @@
     <p class="text-center">Hola <strong>@ViewBag.AdminNombre</strong>, está actualizando los datos del recurso.</p>
 
     <form asp-action="EditarRecurso" method="post">
-        <input type="hidden" name="Id" value="@@Model.Id">
+        <input type="hidden" name="Id" value="@Model.Id">
 
         <div class="mb-3">
             <label for="Nombre" class="form-label">Nombre del Recurso</label>
-            <input type="text" class="form-control" name="Nombre" value="@@Model.Nombre" required>
+            <input type="text" class="form-control" name="Nombre" value="@Model.Nombre" required>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Seleccione el Tipo:</label>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="Tipo" value="Aula" @@(Model.Tipo == "Aula" ? "checked" : "") required>
+                <input class="form-check-input" type="radio" name="Tipo" value="Aula" @(Model.Tipo == "Aula" ? "checked" : "") required>
                 <label class="form-check-label">Aula</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="Tipo" value="Laboratorio" @@(Model.Tipo == "Laboratorio" ? "checked" : "")>
+                <input class="form-check-input" type="radio" name="Tipo" value="Laboratorio" @(Model.Tipo == "Laboratorio" ? "checked" : "")>
                 <label class="form-check-label">Laboratorio</label>
             </div>
         </div>
@@ -32,8 +32,8 @@
         <div class="mb-3">
             <label for="Estado" class="form-label">Estado</label>
             <select class="form-select" name="Estado">
-                <option value="Activo" @@(Model.Estado == "Activo" ? "selected" : "")>Activo</option>
-                <option value="Inactivo" @@(Model.Estado == "Inactivo" ? "selected" : "")>Inactivo</option>
+                <option value="Activo" selected="@(Model.Estado == "Activo")">Activo</option>
+                <option value="Inactivo" selected="@(Model.Estado == "Inactivo")">Inactivo</option>
             </select>
         </div>
 
@@ -44,7 +44,7 @@
 
         <div class="mb-3">
             <label for="FechaRegistro" class="form-label">Fecha de Registro</label>
-            <input type="date" class="form-control" name="FechaRegistro" value="@@Model.FechaRegistro.ToString("yyyy-MM-dd")">
+            <input type="date" class="form-control" name="FechaRegistro" value="@Model.FechaRegistro.ToString("yyyy-MM-dd")">
         </div>
 
         <button type="submit" class="btn btn-primary">Actualizar</button>
