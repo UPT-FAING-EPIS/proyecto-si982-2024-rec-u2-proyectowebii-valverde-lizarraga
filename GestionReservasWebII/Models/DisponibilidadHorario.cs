@@ -23,8 +23,5 @@ public partial class DisponibilidadHorario
 
     public virtual ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
 
-    public static implicit operator DisponibilidadHorario(DisponibilidadHorario v)
-    {
-        throw new NotImplementedException();
-    }
+    
 }

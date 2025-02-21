@@ -32,8 +32,8 @@
         <div class="mb-3">
             <label for="Estado" class="form-label">Estado</label>
             <select class="form-select" name="Estado">
-                <option value="Activo" @(Model.Estado == "Activo" ? "selected" : "")>Activo</option>
-                <option value="Inactivo" @(Model.Estado == "Inactivo" ? "selected" : "")>Inactivo</option>
+                <option value="Activo" @@(Model.Estado == "Activo" ? "selected" : "")>Activo</option>
+                <option value="Inactivo" @@(Model.Estado == "Inactivo" ? "selected" : "")>Inactivo</option>
             </select>
         </div>
 
