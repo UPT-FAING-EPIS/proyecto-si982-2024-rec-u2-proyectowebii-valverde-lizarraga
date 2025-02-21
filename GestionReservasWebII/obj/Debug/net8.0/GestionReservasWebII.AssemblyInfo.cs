@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestionReservasWebII")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b6ad1d1bb46f6d9d97e5f5fe4672291f5e38944a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+edd7334058a060fe536af66903444f7b5ebe8ce0")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestionReservasWebII")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestionReservasWebII")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

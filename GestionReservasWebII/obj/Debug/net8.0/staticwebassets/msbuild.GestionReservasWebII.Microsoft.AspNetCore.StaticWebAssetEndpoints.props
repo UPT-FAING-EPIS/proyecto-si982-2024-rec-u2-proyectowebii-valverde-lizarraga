@@ -28,13 +28,13 @@
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\GestionReservasWebII.2vhr2ej0vf.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"2vhr2ej0vf"},{"Name":"integrity","Value":"sha256-0gL74PhMF/28Rddd4QstaYcC4qiWQ2u3/hSDkqmzOA8="},{"Name":"label","Value":"_content/GestionReservasWebII/GestionReservasWebII.bundle.scp.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1138"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00220gL74PhMF/28Rddd4QstaYcC4qiWQ2u3/hSDkqmzOA8=\u0022"},{"Name":"Last-Modified","Value":"Fri, 14 Feb 2025 00:00:33 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1138"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00220gL74PhMF/28Rddd4QstaYcC4qiWQ2u3/hSDkqmzOA8=\u0022"},{"Name":"Last-Modified","Value":"Fri, 21 Feb 2025 00:47:53 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/GestionReservasWebII/GestionReservasWebII.bundle.scp.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\GestionReservasWebII.2vhr2ej0vf.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-0gL74PhMF/28Rddd4QstaYcC4qiWQ2u3/hSDkqmzOA8="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1138"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00220gL74PhMF/28Rddd4QstaYcC4qiWQ2u3/hSDkqmzOA8=\u0022"},{"Name":"Last-Modified","Value":"Fri, 14 Feb 2025 00:00:33 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1138"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00220gL74PhMF/28Rddd4QstaYcC4qiWQ2u3/hSDkqmzOA8=\u0022"},{"Name":"Last-Modified","Value":"Fri, 21 Feb 2025 00:47:53 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/GestionReservasWebII/images/fondo.a5gylht8ki.png">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\fondo.png'))</AssetFile>

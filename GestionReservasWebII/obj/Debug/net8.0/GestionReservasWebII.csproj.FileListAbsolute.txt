@@ -441,8 +441,6 @@ C:\Users\Jean_\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\Gesti
 C:\Users\Jean_\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\obj\Debug\net8.0\GestionReservasWebII.pdb
 C:\Users\Jean_\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\obj\Debug\net8.0\GestionReservasWebII.genruntimeconfig.cache
 C:\Users\Jean_\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\obj\Debug\net8.0\ref\GestionReservasWebII.dll
-C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\appsettings.Development.json
-C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\appsettings.json
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\templates\common\ManagedReference.common.js
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\templates\common\RestApi.common.js
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\templates\common\UniversalReference.common.js
@@ -755,6 +753,8 @@ C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionR
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\templates\statictoc\toc.json.tmpl
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\templates\statictoc\toc.tmpl.js
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\templates\statictoc\token.json
+C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\appsettings.json
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\.playwright\node\win32_x64\node.exe
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\.playwright\node\LICENSE
 C:\Users\HP\proyecto-si982-2024-rec-u2-proyectowebii-valverde-lizarraga\GestionReservasWebII\bin\Debug\net8.0\.playwright\package\api.json
